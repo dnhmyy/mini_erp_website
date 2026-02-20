@@ -129,7 +129,7 @@ class InitialDataSeeder extends Seeder
         if ($dev && $beryl) {
             // REQ-BB-20260220-001
             $req1 = Permintaan::updateOrCreate(
-                ['nomor_permintaan' => 'REQ-BB-20260220-001'],
+                ['no_request' => 'REQ-BB-20260220-001'],
                 [
                     'user_id'   => $dev->id,
                     'cabang_id' => $beryl->id,
@@ -148,7 +148,7 @@ class InitialDataSeeder extends Seeder
 
             // REQ-ISIAN-20260220-001
             $req2 = Permintaan::updateOrCreate(
-                ['nomor_permintaan' => 'REQ-ISIAN-20260220-001'],
+                ['no_request' => 'REQ-ISIAN-20260220-001'],
                 [
                     'user_id'   => $dev->id,
                     'cabang_id' => $beryl->id,
@@ -167,7 +167,7 @@ class InitialDataSeeder extends Seeder
 
             // REQ-GA-20260220-001 (received)
             $req3 = Permintaan::updateOrCreate(
-                ['nomor_permintaan' => 'REQ-GA-20260220-001'],
+                ['no_request' => 'REQ-GA-20260220-001'],
                 [
                     'user_id'   => $dev->id,
                     'cabang_id' => $beryl->id,
