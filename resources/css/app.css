@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary-dark-green: #00271b;
+    --secondary-green: #064e3b;
+    --soft-white: #f8fafc;
+    --soft-gray: #f1f5f9;
+}
+
+@layer base {
+    body {
+        @apply bg-slate-50 text-slate-900;
+    }
+}
+
+@layer components {
+    .bg-brand-primary {
+        background-color: var(--primary-dark-green);
+    }
+
+    .bg-brand-secondary {
+        background-color: var(--secondary-green);
+    }
+
+    .text-brand-primary {
+        color: var(--primary-dark-green);
+    }
+
+    .border-brand-primary {
+        border-color: var(--primary-dark-green);
+    }
+}

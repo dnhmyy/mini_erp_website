@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rotikebanggaan-app:v1
+    container_name: rotikebanggaan_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      # Pengecualian folder vendor dan build agar murni pakai versi container
+      - ./:/var/www
+      - /var/www/vendor
+      - /var/www/node_modules
+      - /var/www/public/build
+    networks:
+      - rotinet
+
+  webserver:
+    image: nginx:alpine
+    container_name: rotikebanggaan_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/www/public/build
+    networks:
+      - rotinet
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: rotikebanggaan_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - rotidb:/var/lib/mysql
+    networks:
+      - rotinet
+    ports:
+      # Membuka port database ke luar jika sesekali ingin dicek via dbeaver/navicat
+      - "3306:3306"
+
+networks:
+  rotinet:
+    driver: bridge
+
+volumes:
+  rotidb:
