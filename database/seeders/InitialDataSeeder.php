@@ -25,35 +25,35 @@ class InitialDataSeeder extends Seeder
 
         $cabang3 = Cabang::firstOrCreate(
             ['nama' => 'Dapur Solvang'],
-            ['alamat' => '']
+            ['alamat' => 'Solvang Dapur Area']
         );
 
         $cabang4 = Cabang::firstOrCreate(
             ['nama' => 'Pastry Solvang'],
-            ['alamat' => '']
+            ['alamat' => 'Solvang Pastry Area']
         );
 
         // Products
         MasterProduk::firstOrCreate(
             ['kode_produk' => 'ROTI001'],
-            ['nama_produk' => 'Roti Tawar Kebanggaan', 'satuan' => 'Pcs']
+            ['nama_produk' => 'Roti Tawar Kebanggaan', 'satuan' => 'Pcs', 'kategori' => 'BB']
         );
 
         MasterProduk::firstOrCreate(
             ['kode_produk' => 'ROTI002'],
-            ['nama_produk' => 'Roti Coklat Lumer', 'satuan' => 'Pcs']
+            ['nama_produk' => 'Roti Coklat Lumer', 'satuan' => 'Pcs', 'kategori' => 'ISIAN']
         );
 
         MasterProduk::firstOrCreate(
             ['kode_produk' => 'ROTI003'],
-            ['nama_produk' => 'Roti Keju Spesial', 'satuan' => 'Pcs']
+            ['nama_produk' => 'Roti Keju Spesial', 'satuan' => 'Pcs', 'kategori' => 'GA']
         );
 
         // Users
         User::firstOrCreate(
             ['email' => 'admin@rotikebanggaan.com'],
             [
-                'name'     => 'Super Admin',
+                'name'     => 'Super User',
                 'password' => Hash::make('password'),
                 'role'     => 'superuser',
             ]
@@ -62,7 +62,7 @@ class InitialDataSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'gudang@rotikebanggaan.com'],
             [
-                'name'     => 'Admin Gudang',
+                'name'     => 'Staff Gudang',
                 'password' => Hash::make('password'),
                 'role'     => 'staff_gudang',
             ]
@@ -71,7 +71,7 @@ class InitialDataSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'sudirman@rotikebanggaan.com'],
             [
-                'name'      => 'Admin Cabang Sudirman',
+                'name'      => 'Staff Admin Sudirman',
                 'password'  => Hash::make('password'),
                 'role'      => 'staff_admin',
                 'cabang_id' => $cabang1->id,
@@ -81,7 +81,7 @@ class InitialDataSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'thamrin@rotikebanggaan.com'],
             [
-                'name'      => 'Admin Cabang Thamrin',
+                'name'      => 'Staff Admin Thamrin',
                 'password'  => Hash::make('password'),
                 'role'      => 'staff_admin',
                 'cabang_id' => $cabang2->id,
@@ -91,9 +91,30 @@ class InitialDataSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'produksi@rotikebanggaan.com'],
             [
-                'name'     => 'Staff Produksi',
-                'password' => Hash::make('password'),
-                'role'     => 'staff_produksi',
+                'name'      => 'Staff Produksi',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff_produksi',
+                'cabang_id' => $cabang3->id, // Default to Dapur
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'dapur@rotikebanggaan.com'],
+            [
+                'name'      => 'Staff Dapur',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff_dapur',
+                'cabang_id' => $cabang3->id,
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'pastry@rotikebanggaan.com'],
+            [
+                'name'      => 'Staff Pastry',
+                'password'  => Hash::make('password'),
+                'role'      => 'staff_pastry',
+                'cabang_id' => $cabang4->id,
             ]
         );
     }
