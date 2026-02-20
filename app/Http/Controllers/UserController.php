@@ -54,8 +54,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi',
-            'cabang_id' => 'required_if:role,staff_admin|required_if:role,staff_produksi|nullable|exists:cabangs,id',
+            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi,staff_dapur,staff_pastry',
+            'cabang_id' => 'required_if:role,staff_admin,staff_produksi,staff_dapur,staff_pastry|nullable|exists:cabangs,id',
         ]);
 
         $data = [

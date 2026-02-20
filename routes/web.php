@@ -9,7 +9,7 @@ use App\Http\Controllers\PermintaanController;
 use App\Http\Controllers\DocumentController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

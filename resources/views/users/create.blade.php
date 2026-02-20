@@ -62,7 +62,7 @@
     </div>
 
     <script>
-        function toggleCabang() {
+        function toggleCabangSelection() {
             const roleSelect = document.getElementById('role');
             const cabangSelection = document.getElementById('cabang_selection');
             const cabangInput = document.getElementById('cabang_id');

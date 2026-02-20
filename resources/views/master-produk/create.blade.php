@@ -35,7 +35,9 @@
                         <option value="">-- Semua (kalau GA tidak perlu diisi) --</option>
                         <option value="staff_admin" {{ old('target_role') == 'staff_admin' ? 'selected' : '' }}>Staff Admin</option>
                         <option value="staff_produksi" {{ old('target_role') == 'staff_produksi' ? 'selected' : '' }}>Staff Produksi</option>
-                        <option value="all" {{ old('target_role') == 'all' ? 'selected' : '' }}>Semua (Staff Admin & Staff Produksi)</option>
+                        <option value="staff_dapur" {{ old('target_role') == 'staff_dapur' ? 'selected' : '' }}>Staff Dapur</option>
+                        <option value="staff_pastry" {{ old('target_role') == 'staff_pastry' ? 'selected' : '' }}>Staff Pastry</option>
+                        <option value="all" {{ old('target_role') == 'all' ? 'selected' : '' }}>Semua (Semua Staff Cabang)</option>
                     </select>
                     <p class="mt-1 text-xs text-slate-500 italic">Tentukan siapa yang boleh request produk ini. Pilih "Semua" jika berlaku untuk semua staff cabang.</p>
                     @error('target_role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
