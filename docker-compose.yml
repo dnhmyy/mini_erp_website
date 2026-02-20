@@ -10,11 +10,12 @@ services:
     restart: unless-stopped
     working_dir: /var/www
     volumes:
-      # Pengecualian folder vendor dan build agar murni pakai versi container
+      # Mount source code dari host, tapi kecualikan folder yang harus pakai versi container
       - ./:/var/www
       - /var/www/vendor
       - /var/www/node_modules
-      - /var/www/public/build
+      # Gunakan named volume agar hasil build bisa diakses nginx
+      - vite_build:/var/www/public/build
     networks:
       - rotinet
 
@@ -27,7 +28,8 @@ services:
     volumes:
       - ./:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /var/www/public/build
+      # Named volume yang sama dengan app — nginx bisa serve aset Vite
+      - vite_build:/var/www/public/build
     networks:
       - rotinet
     depends_on:
@@ -56,3 +58,4 @@ networks:
 
 volumes:
   rotidb:
+  vite_build:
