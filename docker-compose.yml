@@ -48,7 +48,7 @@ services:
       - rotinet
     ports:
       # Membuka port database ke luar jika sesekali ingin dicek via dbeaver/navicat
-      - "3306:3306"
+      - "3307:3306"
 
 networks:
   rotinet:
