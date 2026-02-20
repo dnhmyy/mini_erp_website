@@ -142,7 +142,7 @@ class InitialDataSeeder extends Seeder
             if ($req1 && $p4) {
                 PermintaanDetail::updateOrCreate(
                     ['permintaan_id' => $req1->id, 'produk_id' => $p4->id],
-                    ['jumlah' => 2]
+                    ['qty' => 2]
                 );
             }
 
@@ -161,7 +161,7 @@ class InitialDataSeeder extends Seeder
             if ($req2 && $p5) {
                 PermintaanDetail::updateOrCreate(
                     ['permintaan_id' => $req2->id, 'produk_id' => $p5->id],
-                    ['jumlah' => 2]
+                    ['qty' => 2]
                 );
             }
 
@@ -181,7 +181,7 @@ class InitialDataSeeder extends Seeder
             if ($req3 && $p6) {
                 PermintaanDetail::updateOrCreate(
                     ['permintaan_id' => $req3->id, 'produk_id' => $p6->id],
-                    ['jumlah' => 2]
+                    ['qty' => 2]
                 );
             }
         }
