@@ -7,115 +7,183 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Cabang;
 use App\Models\MasterProduk;
 use App\Models\User;
+use App\Models\MasterDriver;
+use App\Models\Permintaan;
+use App\Models\PermintaanDetail;
 
 class InitialDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // Branches
-        $cabang1 = Cabang::firstOrCreate(
-            ['nama' => 'Cabang Sudirman'],
-            ['alamat' => 'Jl. Sudirman No. 123, Jakarta']
-        );
+        // 1. CABANGS (Historical)
+        $cabangs = [
+            'Downtown'        => 'Jl. Ruko Downtown',
+            'Sorrento'        => 'Jl. Ruko Sorrento',
+            'Beryl'           => 'Jl. Ruko Beryl',
+            'Greenlake'       => 'Jl. Ruko Greenlake',
+            'Kelapa Gading'   => 'GAFOY',
+            'Grand Indonesia' => 'Jl. Grand Indonesia',
+            'Dapur Solvang'   => 'Solvang Dapur Area',
+            'Pastry Solvang'  => 'Solvang Pastry Area',
+        ];
 
-        $cabang2 = Cabang::firstOrCreate(
-            ['nama' => 'Cabang Thamrin'],
-            ['alamat' => 'Jl. Thamrin No. 45, Jakarta']
-        );
+        foreach ($cabangs as $nama => $alamat) {
+            Cabang::updateOrCreate(['nama' => $nama], ['alamat' => $alamat]);
+        }
 
-        $cabang3 = Cabang::firstOrCreate(
-            ['nama' => 'Dapur Solvang'],
-            ['alamat' => 'Solvang Dapur Area']
-        );
+        // 2. MASTER_DRIVERS (Historical)
+        $drivers = ['Jojo', 'Iki', 'Rendi'];
+        foreach ($drivers as $driver) {
+            MasterDriver::firstOrCreate(['nama' => $driver]);
+        }
 
-        $cabang4 = Cabang::firstOrCreate(
-            ['nama' => 'Pastry Solvang'],
-            ['alamat' => 'Solvang Pastry Area']
-        );
+        // 3. MASTER_PRODUKS (Historical)
+        $produks = [
+            ['kode' => 'SR0002', 'nama' => 'SR - CABE RAWIT', 'satuan' => 'BKS', 'kat' => 'BB', 'role' => 'staff_admin'],
+            ['kode' => 'CK0003', 'nama' => 'LAPIS LEGIT', 'satuan' => 'PCS', 'kat' => 'ISIAN', 'role' => 'staff_admin'],
+            ['kode' => 'SG00016', 'nama' => 'SG - TISSU TOWEL', 'satuan' => 'PACK', 'kat' => 'GA', 'role' => 'staff_admin'],
+            ['kode' => 'BB0006', 'nama' => 'BB - TELUR AYAM', 'satuan' => 'IKAT', 'kat' => 'BB', 'role' => 'staff_produksi'],
+            ['kode' => 'IN0001', 'nama' => 'IN - BA', 'satuan' => 'KLNG', 'kat' => 'ISIAN', 'role' => 'staff_produksi'],
+            ['kode' => 'SN0009', 'nama' => 'SN - RINSO BUBUK', 'satuan' => 'BKS', 'kat' => 'GA', 'role' => 'staff_produksi'],
+        ];
 
-        // Products
-        MasterProduk::firstOrCreate(
-            ['kode_produk' => 'ROTI001'],
-            ['nama_produk' => 'Roti Tawar Kebanggaan', 'satuan' => 'Pcs', 'kategori' => 'BB']
-        );
+        foreach ($produks as $p) {
+            $masterProduk = MasterProduk::updateOrCreate(
+                ['kode_produk' => $p['kode']],
+                [
+                    'nama_produk' => $p['nama'],
+                    'satuan'      => $p['satuan'],
+                    'kategori'    => $p['kat'],
+                    'target_role' => $p['role']
+                ]
+            );
 
-        MasterProduk::firstOrCreate(
-            ['kode_produk' => 'ROTI002'],
-            ['nama_produk' => 'Roti Coklat Lumer', 'satuan' => 'Pcs', 'kategori' => 'ISIAN']
-        );
+            // Mapping to all branches (Historical relation)
+            $allCabangIds = Cabang::pluck('id')->toArray();
+            $masterProduk->cabangs()->sync($allCabangIds);
+        }
 
-        MasterProduk::firstOrCreate(
-            ['kode_produk' => 'ROTI003'],
-            ['nama_produk' => 'Roti Keju Spesial', 'satuan' => 'Pcs', 'kategori' => 'GA']
-        );
-
-        // Users
-        User::firstOrCreate(
-            ['email' => 'admin@rotikebanggaan.com'],
+        // 4. USERS (Historical)
+        $users = [
             [
-                'name'     => 'Super User',
-                'password' => Hash::make('password'),
-                'role'     => 'superuser',
-            ]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'gudang@rotikebanggaan.com'],
+                'email' => 'dev',
+                'name'  => 'Akhdan IT',
+                'role'  => 'superuser',
+                'cabang'=> null
+            ],
             [
-                'name'     => 'Staff Gudang',
-                'password' => Hash::make('password'),
-                'role'     => 'staff_gudang',
-            ]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'sudirman@rotikebanggaan.com'],
+                'email' => 'icha',
+                'name'  => 'Icha',
+                'role'  => 'staff_gudang',
+                'cabang'=> null
+            ],
             [
-                'name'      => 'Staff Admin Sudirman',
-                'password'  => Hash::make('password'),
-                'role'      => 'staff_admin',
-                'cabang_id' => $cabang1->id,
-            ]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'thamrin@rotikebanggaan.com'],
+                'email' => 'kalyca',
+                'name'  => 'Kalyca',
+                'role'  => 'staff_admin',
+                'cabang'=> 'Downtown'
+            ],
             [
-                'name'      => 'Staff Admin Thamrin',
-                'password'  => Hash::make('password'),
-                'role'      => 'staff_admin',
-                'cabang_id' => $cabang2->id,
-            ]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'produksi@rotikebanggaan.com'],
+                'email' => 'ziyad',
+                'name'  => 'Ziyad',
+                'role'  => 'staff_produksi',
+                'cabang'=> 'Sorrento'
+            ],
             [
-                'name'      => 'Staff Produksi',
-                'password'  => Hash::make('password'),
-                'role'      => 'staff_produksi',
-                'cabang_id' => $cabang3->id, // Default to Dapur
-            ]
-        );
-
-        User::firstOrCreate(
-            ['email' => 'dapur@rotikebanggaan.com'],
+                'email' => 'dapur',
+                'name'  => 'Staff Dapur',
+                'role'  => 'staff_dapur',
+                'cabang'=> 'Dapur Solvang'
+            ],
             [
-                'name'      => 'Staff Dapur',
-                'password'  => Hash::make('password'),
-                'role'      => 'staff_dapur',
-                'cabang_id' => $cabang3->id,
-            ]
-        );
+                'email' => 'pastry',
+                'name'  => 'Staff Pastry',
+                'role'  => 'staff_pastry',
+                'cabang'=> 'Pastry Solvang'
+            ],
+        ];
 
-        User::firstOrCreate(
-            ['email' => 'pastry@rotikebanggaan.com'],
-            [
-                'name'      => 'Staff Pastry',
-                'password'  => Hash::make('password'),
-                'role'      => 'staff_pastry',
-                'cabang_id' => $cabang4->id,
-            ]
-        );
+        foreach ($users as $u) {
+            $cabangId = null;
+            if ($u['cabang']) {
+                $c = Cabang::where('nama', $u['cabang'])->first();
+                $cabangId = $c ? $c->id : null;
+            }
+
+            User::updateOrCreate(
+                ['email' => $u['email']],
+                [
+                    'name'      => $u['name'],
+                    'password'  => Hash::make('password'),
+                    'role'      => $u['role'],
+                    'cabang_id' => $cabangId
+                ]
+            );
+        }
+
+        // 5. PERMINTAANS (Historical)
+        // Extracting IDs carefully
+        $dev = User::where('email', 'dev')->first();
+        $beryl = Cabang::where('nama', 'Beryl')->first();
+
+        if ($dev && $beryl) {
+            // REQ-BB-20260220-001
+            $req1 = Permintaan::updateOrCreate(
+                ['nomor_permintaan' => 'REQ-BB-20260220-001'],
+                [
+                    'user_id'   => $dev->id,
+                    'cabang_id' => $beryl->id,
+                    'status'    => 'pending',
+                    'kategori'  => 'BB',
+                    'tanggal'   => '2026-02-20 10:04:38'
+                ]
+            );
+            $p4 = MasterProduk::where('kode_produk', 'SR0002')->first();
+            if ($req1 && $p4) {
+                PermintaanDetail::updateOrCreate(
+                    ['permintaan_id' => $req1->id, 'produk_id' => $p4->id],
+                    ['jumlah' => 2]
+                );
+            }
+
+            // REQ-ISIAN-20260220-001
+            $req2 = Permintaan::updateOrCreate(
+                ['nomor_permintaan' => 'REQ-ISIAN-20260220-001'],
+                [
+                    'user_id'   => $dev->id,
+                    'cabang_id' => $beryl->id,
+                    'status'    => 'pending',
+                    'kategori'  => 'ISIAN',
+                    'tanggal'   => '2026-02-20 10:04:48'
+                ]
+            );
+            $p5 = MasterProduk::where('kode_produk', 'CK0003')->first();
+            if ($req2 && $p5) {
+                PermintaanDetail::updateOrCreate(
+                    ['permintaan_id' => $req2->id, 'produk_id' => $p5->id],
+                    ['jumlah' => 2]
+                );
+            }
+
+            // REQ-GA-20260220-001 (received)
+            $req3 = Permintaan::updateOrCreate(
+                ['nomor_permintaan' => 'REQ-GA-20260220-001'],
+                [
+                    'user_id'   => $dev->id,
+                    'cabang_id' => $beryl->id,
+                    'status'    => 'received',
+                    'kategori'  => 'GA',
+                    'tanggal'   => '2026-02-20 10:05:04',
+                    'driver'    => 'Jojo'
+                ]
+            );
+            $p6 = MasterProduk::where('kode_produk', 'SG00016')->first();
+            if ($req3 && $p6) {
+                PermintaanDetail::updateOrCreate(
+                    ['permintaan_id' => $req3->id, 'produk_id' => $p6->id],
+                    ['jumlah' => 2]
+                );
+            }
+        }
     }
 }
