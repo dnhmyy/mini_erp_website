@@ -147,23 +147,61 @@ class PermintaanController extends Controller
 
         $request->validate([
             'driver' => 'required|string|max:255',
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:permintaan_details,id',
+            'items.*.qty_dikirim' => 'required|integer|min:0',
         ]);
 
-        $permintaan->update([
-            'status' => 'shipped',
-            'driver' => $request->driver,
-        ]);
+        return DB::transaction(function () use ($request, $permintaan) {
+            foreach ($request->items as $item) {
+                PermintaanDetail::where('id', $item['id'])
+                    ->where('permintaan_id', $permintaan->id)
+                    ->update(['qty_dikirim' => $item['qty_dikirim']]);
+            }
 
-        return redirect()->back()->with('success', 'Status diperbarui menjadi "Dikirim" oleh ' . $request->driver . '.');
+            $permintaan->update([
+                'status' => 'shipped',
+                'driver' => $request->driver,
+            ]);
+
+            return redirect()->back()->with('success', 'Status diperbarui menjadi "Dikirim" dengan rincian jumlah kirim.');
+        });
     }
 
-    public function receive(Permintaan $permintaan)
+    public function receive(Request $request, Permintaan $permintaan)
     {
         $user = auth()->user();
-        if (!$user->isBranchLevel() && !$user->isSuperUser()) abort(403);
+        if (!$user->isBranchLevel()) abort(403);
         if ($permintaan->cabang_id !== $user->cabang_id && !$user->isSuperUser()) abort(403);
+        if ($permintaan->status !== 'shipped') abort(403, 'Hanya barang dengan status "Dikirim" yang bisa dikonfirmasi.');
 
-        $permintaan->update(['status' => 'received']);
-        return redirect()->back()->with('success', 'Barang dinyatakan telah diterima.');
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:permintaan_details,id',
+            'items.*.qty_terima' => 'required|integer|min:0',
+        ]);
+
+        return DB::transaction(function () use ($request, $permintaan) {
+            $allComplete = true;
+
+            foreach ($request->items as $item) {
+                $detail = PermintaanDetail::where('id', $item['id'])
+                    ->where('permintaan_id', $permintaan->id)
+                    ->firstOrFail();
+                
+                $qty_terima = $item['qty_terima'];
+                $detail->update(['qty_terima' => $qty_terima]);
+
+                // if any item received is less than what was shipped, it's partial
+                if ($qty_terima < $detail->qty_dikirim) {
+                    $allComplete = false;
+                }
+            }
+
+            $status = $allComplete ? 'received_complete' : 'received_partial';
+            $permintaan->update(['status' => $status]);
+
+            return redirect()->back()->with('success', 'Penerimaan barang berhasil disimpan dengan status: ' . str_replace('_', ' ', strtoupper($status)));
+        });
     }
 }

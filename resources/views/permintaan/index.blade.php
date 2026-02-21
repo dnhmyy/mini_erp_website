@@ -50,9 +50,11 @@
                                         {{ $request->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
                                         {{ $request->status === 'approved' ? 'bg-blue-100 text-blue-700' : '' }}
                                         {{ $request->status === 'shipped' ? 'bg-purple-100 text-purple-700' : '' }}
+                                        {{ $request->status === 'received_complete' ? 'bg-green-100 text-green-700' : '' }}
+                                        {{ $request->status === 'received_partial' ? 'bg-orange-100 text-orange-700' : '' }}
                                         {{ $request->status === 'received' ? 'bg-green-100 text-green-700' : '' }}
                                         {{ $request->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}">
-                                        {{ ucfirst($request->status) }}
+                                        {{ str_replace('_', ' ', ucfirst($request->status)) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-slate-600 text-sm">{{ $request->user->name }}</td>

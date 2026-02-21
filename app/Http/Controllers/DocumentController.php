@@ -20,7 +20,7 @@ class DocumentController extends Controller
 
     public function printDelivery(Permintaan $permintaan)
     {
-        if (!in_array($permintaan->status, ['shipped', 'received'])) {
+        if (!in_array($permintaan->status, ['shipped', 'received', 'received_complete', 'received_partial'])) {
             return redirect()->back()->with('error', 'Surat Jalan belum dapat dicetak.');
         }
 
@@ -33,7 +33,7 @@ class DocumentController extends Controller
 
     public function printReceipt(Permintaan $permintaan)
     {
-        if ($permintaan->status !== 'received') {
+        if (!in_array($permintaan->status, ['received', 'received_complete', 'received_partial'])) {
             return redirect()->back()->with('error', 'Surat Terima belum dapat dicetak.');
         }
 
