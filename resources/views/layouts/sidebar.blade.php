@@ -4,7 +4,7 @@
     <div class="flex items-center justify-start h-20 border-b border-brand-secondary px-6 relative">
         <!-- Logo -->
         <img src="{{ asset('images/logo.png') }}" alt="Logo Roti" class="w-9 h-9 mr-3 drop-shadow-sm object-contain shrink-0">
-        <span class="text-xl font-bold tracking-tight text-white drop-shadow-sm truncate mt-0.5">
+        <span class="text-xl font-bold tracking-tight text-white drop-shadow-sm mt-0.5 whitespace-nowrap">
             RotiKebanggaan
         </span>
         <!-- Close button mobile -->

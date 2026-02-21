@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        Katalog Barang (Master List)
+        Manajamen Katalog
     </x-slot>
 
     <div class="space-y-6">
@@ -44,7 +44,8 @@
                 <table class="w-full text-left">
                     <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">Kode</th>
+                            <th class="px-6 py-3 font-semibold w-16">No</th>
+                            <th class="px-6 py-3 font-semibold">Kode Barang</th>
                             <th class="px-6 py-3 font-semibold">Nama Barang</th>
                             <th class="px-6 py-3 font-semibold text-center">Satuan</th>
                             <th class="px-6 py-3 font-semibold text-right">Aksi</th>
@@ -53,8 +54,9 @@
                     <tbody class="divide-y divide-slate-100">
                         @forelse($items as $item)
                         <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4 font-mono text-sm text-brand-primary font-bold">{{ $item->kode }}</td>
-                            <td class="px-6 py-4 text-sm text-slate-700 font-semibold">{{ $item->nama }}</td>
+                            <td class="px-6 py-4 text-slate-600">{{ $items->firstItem() + $loop->index }}</td>
+                            <td class="px-6 py-4 font-medium text-slate-700">{{ $item->kode }}</td>
+                            <td class="px-6 py-4 text-slate-600 font-medium">{{ $item->nama }}</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-slate-100 text-slate-700">
                                     {{ $item->satuan }}
@@ -77,7 +79,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-slate-500 italic">Data katalog kosong...</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-slate-500 italic">Data katalog kosong...</td>
                         </tr>
                         @endforelse
                     </tbody>
