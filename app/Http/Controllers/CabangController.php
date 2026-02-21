@@ -8,9 +8,14 @@ use App\Models\Cabang;
 
 class CabangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cabangs = Cabang::latest()->paginate(30);
+        $query = Cabang::query();
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', "%{$request->search}%")
+                  ->orWhere('alamat', 'like', "%{$request->search}%");
+        }
+        $cabangs = $query->latest()->paginate(30)->appends($request->query());
         return view('cabang.index', compact('cabangs'));
     }
 

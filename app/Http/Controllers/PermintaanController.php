@@ -19,8 +19,22 @@ class PermintaanController extends Controller
         $kategori = $request->query('kategori', 'BB');
 
         $query = Permintaan::with(['cabang', 'user'])
-            ->where('kategori', $kategori)
-            ->latest();
+            ->where('kategori', $kategori);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('no_request', 'like', "%{$search}%")
+                  ->orWhereHas('cabang', function($q2) use ($search) {
+                      $q2->where('nama', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('user', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $query->latest();
 
         // Branch-level roles only see their own branch's requests
         if (auth()->user()->isBranchLevel()) {
