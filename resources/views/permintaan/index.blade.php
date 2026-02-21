@@ -44,65 +44,55 @@
             </form>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                        <tr>
-                            <th class="px-6 py-3 font-semibold">No</th>
-                            <th class="px-6 py-3 font-semibold">No Request</th>
-                            <th class="px-6 py-3 font-semibold">Tanggal</th>
-                            <th class="px-6 py-3 font-semibold">Cabang</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
-                            <th class="px-6 py-3 font-semibold">Dibuat Oleh</th>
-                            <th class="px-6 py-3 font-semibold">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($requests as $request)
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="px-6 py-4 text-slate-600">
-                                    {{ $requests->firstItem() + $loop->index }}
-                                </td>
-                                <td class="px-6 py-4 font-medium text-slate-700">
-                                    {{ $request->no_request }}
-                                </td>
-                                <td class="px-6 py-4 text-slate-600">{{ $request->tanggal->format('d/m/Y') }}</td>
-                                <td class="px-6 py-4 text-slate-600">{{ $request->cabang->nama ?? '-' }}</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                        {{ $request->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
-                                        {{ $request->status === 'approved' ? 'bg-blue-100 text-blue-700' : '' }}
-                                        {{ $request->status === 'shipped' ? 'bg-purple-100 text-purple-700' : '' }}
-                                        {{ $request->status === 'received_complete' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $request->status === 'received_partial' ? 'bg-orange-100 text-orange-700' : '' }}
-                                        {{ $request->status === 'received' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $request->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}">
-                                        {{ str_replace('_', ' ', ucfirst($request->status)) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-slate-600 text-sm">{{ $request->user->name }}</td>
-                                <td class="px-6 py-4">
-                                    <a href="{{ route('permintaan.show', $request) }}" class="text-brand-primary hover:text-brand-secondary font-semibold text-sm">
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-slate-500">
-                                    Belum ada permintaan barang.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if($requests->hasPages())
-                <div class="px-6 py-4 border-t border-slate-100">
-                    {{ $requests->links() }}
-                </div>
-            @endif
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" id="main-table-wrapper">
+            @include('permintaan.partials.table')
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.querySelector('form');
+            const tableWrapper = document.getElementById('main-table-wrapper');
+
+            if (filterForm && tableWrapper) {
+                filterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    updateTable();
+                });
+
+                // Handle pagination clicks
+                tableWrapper.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (link && link.href && link.closest('.pagination, nav')) {
+                        e.preventDefault();
+                        updateTable(link.href);
+                    }
+                });
+
+                function updateTable(url = null) {
+                    const formData = new FormData(filterForm);
+                    const params = new URLSearchParams(formData);
+                    const fetchUrl = url || `${filterForm.action}?${params.toString()}`;
+
+                    tableWrapper.classList.add('opacity-50', 'pointer-events-none', 'transition-opacity');
+
+                    fetch(fetchUrl, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        tableWrapper.innerHTML = html;
+                        tableWrapper.classList.remove('opacity-50', 'pointer-events-none');
+                        window.history.pushState({}, '', fetchUrl.replace(/([&?])ajax=1/, ''));
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        tableWrapper.classList.remove('opacity-50', 'pointer-events-none');
+                    });
+                }
+            }
+        });
+    </script>
 </x-app-layout>

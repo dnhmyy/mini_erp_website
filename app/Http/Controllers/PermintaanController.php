@@ -43,6 +43,10 @@ class PermintaanController extends Controller
 
         $requests = $query->latest()->paginate(30)->appends($request->query());
         
+        if ($request->ajax()) {
+            return view('permintaan.partials.table', compact('requests', 'kategori'))->render();
+        }
+
         return view('permintaan.index', compact('requests', 'kategori'));
     }
 

@@ -126,11 +126,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-6 border-t border-slate-100">
-                    <p class="text-[10px] text-slate-400 italic">* Produk tanpa cabang terpilih akan tersedia untuk SEMUA cabang.</p>
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('master-produk.index') }}" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition tracking-wide uppercase">Batal</a>
-                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-secondary transition-all shadow-lg active:scale-95">
+                <div class="flex items-center justify-between pt-8 border-t border-slate-100">
+                    <p class="text-[10px] text-slate-400 italic max-w-xs leading-relaxed">* Produk tanpa cabang terpilih akan tersedia secara otomatis untuk SEMUA cabang.</p>
+                    <div class="flex items-center space-x-6">
+                        <a href="{{ route('master-produk.index') }}" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition tracking-widest uppercase">Batal</a>
+                        <button type="submit" class="inline-flex items-center px-10 py-3.5 bg-brand-primary text-white text-sm font-bold rounded-xl hover:bg-brand-secondary transition-all shadow-xl hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:scale-95 active:translate-y-0">
                             Simpan ke Master
                         </button>
                     </div>

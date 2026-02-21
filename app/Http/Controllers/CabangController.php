@@ -16,6 +16,11 @@ class CabangController extends Controller
                   ->orWhere('alamat', 'like', '%' . $request->search . '%');
         }
         $cabangs = $query->latest()->paginate(30)->appends($request->query());
+        
+        if ($request->ajax()) {
+            return view('cabang.partials.table', compact('cabangs'))->render();
+        }
+
         return view('cabang.index', compact('cabangs'));
     }
 

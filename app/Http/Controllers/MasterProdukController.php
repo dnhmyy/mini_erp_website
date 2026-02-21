@@ -15,10 +15,7 @@ class MasterProdukController extends Controller
         
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('kode_produk', 'like', "%{$search}%")
-                  ->orWhere('nama_produk', 'like', "%{$search}%");
-            });
+            $query->where('nama_produk', $search);
         }
         
         if ($request->filled('kategori')) {
@@ -29,8 +26,14 @@ class MasterProdukController extends Controller
             $query->where('target_role', $request->target_role);
         }
 
+        $productNames = MasterProduk::distinct()->pluck('nama_produk')->sort();
         $produks = $query->latest()->paginate(30)->appends($request->query());
-        return view('master-produk.index', compact('produks'));
+
+        if ($request->ajax()) {
+            return view('master-produk.partials.table', compact('produks'))->render();
+        }
+
+        return view('master-produk.index', compact('produks', 'productNames'));
     }
 
     public function create()

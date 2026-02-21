@@ -24,6 +24,11 @@ class UserController extends Controller
             });
         }
         $users = $query->latest()->paginate(30)->appends($request->query());
+        
+        if ($request->ajax()) {
+            return view('users.partials.table', compact('users'))->render();
+        }
+
         return view('users.index', compact('users'));
     }
 

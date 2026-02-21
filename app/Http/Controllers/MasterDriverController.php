@@ -14,6 +14,11 @@ class MasterDriverController extends Controller
             $query->where('nama', 'like', '%' . $request->search . '%');
         }
         $drivers = $query->latest()->paginate(30)->appends($request->query());
+        
+        if ($request->ajax()) {
+            return view('master_driver.partials.table', compact('drivers'))->render();
+        }
+
         return view('master_driver.index', compact('drivers'));
     }
 

@@ -11,30 +11,30 @@
             </a>
         @endif
 
-        {{-- Pagination Elements --}}
-        <div class="flex items-center space-x-2">
-            @foreach ($elements as $element)
-                {{-- "Three Dots" Separator --}}
-                @if (is_string($element))
-                    <span aria-disabled="true" class="px-2 text-slate-400 font-bold">{{ $element }}</span>
-                @endif
+            {{-- Pagination Elements --}}
+            <div class="flex items-center space-x-2">
+                @foreach ($elements as $element)
+                    {{-- "Three Dots" Separator --}}
+                    @if (is_string($element))
+                        <span aria-disabled="true" class="px-2 text-slate-400 font-bold tracking-widest">{{ $element }}</span>
+                    @endif
 
-                {{-- Array Of Links --}}
-                @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
-                            <span aria-current="page">
-                                <span class="inline-flex items-center justify-center h-10 w-10 text-sm font-bold bg-[#00271b] text-white rounded-xl shadow-sm">{{ $page }}</span>
-                            </span>
-                        @else
-                            <a href="{{ $url }}" class="inline-flex items-center justify-center h-10 w-10 text-sm font-bold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all duration-200">
-                                {{ $page }}
-                            </a>
-                        @endif
-                    @endforeach
-                @endif
-            @endforeach
-        </div>
+                    {{-- Array Of Links --}}
+                    @if (is_array($element))
+                        @foreach ($element as $page => $url)
+                            @if ($page == $paginator->currentPage())
+                                <span aria-current="page">
+                                    <span class="inline-flex items-center justify-center h-10 w-10 text-sm font-bold bg-[#00271b] text-white rounded-xl shadow-lg ring-2 ring-emerald-900/10">{{ $page }}</span>
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="inline-flex items-center justify-center h-10 w-10 text-sm font-bold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 hover:-translate-y-1 hover:shadow-md active:scale-95 transition-all duration-200">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
+                    @endif
+                @endforeach
+            </div>
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
