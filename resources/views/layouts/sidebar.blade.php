@@ -12,7 +12,7 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
-    <div class="flex flex-col flex-1 overflow-y-auto mt-4">
+    <div class="flex flex-col flex-1 overflow-y-auto mt-4 min-h-0">
         <nav class="flex-1 px-4 py-4 space-y-2">
             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -76,11 +76,14 @@
         </nav>
     </div>
 
-    <div class="p-4 border-t border-brand-secondary">
+    <!-- Bottom Actions -->
+    <div class="p-4 mt-auto border-t border-brand-secondary/50 bg-slate-900/10">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm font-medium rounded-lg hover:bg-red-900/50 transition-colors duration-200">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <button type="submit" class="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-xl text-slate-100 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group">
+                <div class="p-2 rounded-lg bg-red-500/10 group-hover:bg-red-500/20 mr-3 transition-colors">
+                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </div>
                 Logout
             </button>
         </form>
