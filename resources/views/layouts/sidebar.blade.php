@@ -1,3 +1,6 @@
+<aside id="sidebar" 
+       :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+       class="fixed inset-y-0 left-0 z-50 w-64 bg-brand-primary text-white transition-transform duration-300 transform lg:translate-x-0 lg:static lg:inset-0 shadow-2xl flex flex-col">
     <div class="flex items-center justify-start h-20 border-b border-brand-secondary px-6 relative">
         <!-- Logo -->
         <img src="{{ asset('images/logo.png') }}" alt="Logo Roti" class="w-9 h-9 mr-3 drop-shadow-sm object-contain shrink-0">
@@ -82,4 +85,4 @@
             </button>
         </form>
     </div>
-</div>
+</aside>
