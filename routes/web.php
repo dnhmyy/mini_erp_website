@@ -17,6 +17,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'role:superuser'])->group(function () {
+    Route::get('master-data', [\App\Http\Controllers\MasterDataController::class, 'index'])->name('master-data.index');
     Route::resource('master-produk', MasterProdukController::class);
     Route::resource('cabang', CabangController::class);
     Route::resource('users', UserController::class);

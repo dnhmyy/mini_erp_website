@@ -43,28 +43,31 @@
 
             @if(Auth::user()->isSuperUser())
             <div class="pt-4 pb-1 text-[10px] font-bold text-emerald-400/80 uppercase tracking-[0.2em] px-4">
-                Master Data
+                Pusat Data
             </div>
 
-            <x-nav-link :href="route('master-produk.index')" :active="request()->routeIs('master-produk.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                Master Produk
+            <x-nav-link :href="route('master-data.index')" :active="request()->routeIs('master-data.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                Master Data Center
             </x-nav-link>
 
-            <x-nav-link :href="route('cabang.index')" :active="request()->routeIs('cabang.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                Cabang
-            </x-nav-link>
+            <div class="pl-4 space-y-1">
+                <x-nav-link :href="route('master-produk.index')" :active="request()->routeIs('master-produk.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                    Master Produk
+                </x-nav-link>
 
-            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                User Management
-            </x-nav-link>
+                <x-nav-link :href="route('cabang.index')" :active="request()->routeIs('cabang.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                    Daftar Cabang
+                </x-nav-link>
 
-            <x-nav-link :href="route('master-driver.index')" :active="request()->routeIs('master-driver.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                Kurir
-            </x-nav-link>
+                <x-nav-link :href="route('master-driver.index')" :active="request()->routeIs('master-driver.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                    Daftar Kurir
+                </x-nav-link>
+
+                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                    User Control
+                </x-nav-link>
+            </div>
             @endif
         </nav>
     </div>
