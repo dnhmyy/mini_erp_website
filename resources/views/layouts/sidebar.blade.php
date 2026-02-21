@@ -1,14 +1,13 @@
-<div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="flex flex-col w-64 bg-brand-primary h-screen fixed left-0 top-0 text-white shadow-xl transition-transform duration-300 ease-in-out transform z-50 lg:translate-x-0">
-    <div class="flex items-center justify-center h-20 border-b border-brand-secondary px-4 relative">
-        <!-- Close button mobile -->
-        <button @click="sidebarOpen = false" class="absolute top-6 right-4 text-slate-200 hover:text-white lg:hidden">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+    <div class="flex items-center justify-start h-20 border-b border-brand-secondary px-6 relative">
         <!-- Logo -->
-        <img src="{{ asset('images/logo.png') }}" alt="Logo Roti" class="w-10 h-10 mr-2 drop-shadow-sm object-contain shrink-0">
-        <span class="text-2xl font-bold tracking-tight text-white drop-shadow-sm truncate mt-0.5">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo Roti" class="w-9 h-9 mr-3 drop-shadow-sm object-contain shrink-0">
+        <span class="text-xl font-bold tracking-tight text-white drop-shadow-sm truncate mt-0.5">
             RotiKebanggaan
         </span>
+        <!-- Close button mobile -->
+        <button @click="sidebarOpen = false" class="absolute right-4 text-slate-200 hover:text-white lg:hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
     </div>
     <div class="flex flex-col flex-1 overflow-y-auto mt-4">
         <nav class="flex-1 px-4 py-4 space-y-2">
@@ -42,41 +41,34 @@
             </x-nav-link>
 
             @if(Auth::user()->isSuperUser())
-            <div class="pt-6 pb-2 text-[10px] font-bold text-emerald-400/80 uppercase tracking-[0.2em] px-4">
-                MASTER DATA
+            <div class="pt-4 pb-1 text-[10px] font-bold text-emerald-400/80 uppercase tracking-[0.2em] px-4">
+                Master Data
             </div>
 
-            <div class="px-2 space-y-1">
-                <a href="{{ route('master-produk.index') }}" 
-                   class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group {{ request()->routeIs('master-produk.*') ? 'bg-amber-400/10 text-amber-400' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('master-produk.*') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                    Master Produk
-                </a>
+            <x-nav-link :href="route('master-produk.index')" :active="request()->routeIs('master-produk.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                Master Produk
+            </x-nav-link>
 
-                <a href="{{ route('cabang.index') }}" 
-                   class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group {{ request()->routeIs('cabang.*') ? 'bg-amber-400/10 text-amber-400' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('cabang.*') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    Daftar Cabang
-                </a>
+            <x-nav-link :href="route('cabang.index')" :active="request()->routeIs('cabang.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                Daftar Cabang
+            </x-nav-link>
 
-                <a href="{{ route('master-driver.index') }}" 
-                   class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group {{ request()->routeIs('master-driver.*') ? 'bg-amber-400/10 text-amber-400' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('master-driver.*') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    Daftar Kurir
-                </a>
+            <x-nav-link :href="route('master-driver.index')" :active="request()->routeIs('master-driver.index')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Daftar Kurir
+            </x-nav-link>
 
-                <a href="{{ route('users.index') }}" 
-                   class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group {{ request()->routeIs('users.*') ? 'bg-amber-400/10 text-amber-400' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    User Control
-                </a>
+            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                User Control
+            </x-nav-link>
 
-                <a href="{{ route('product-catalog.index') }}" 
-                   class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group {{ request()->routeIs('product-catalog.*') ? 'bg-amber-400/10 text-amber-400' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('product-catalog.*') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    Katalog Barang
-                </a>
-            </div>
+            <x-nav-link :href="route('product-catalog.index')" :active="request()->routeIs('product-catalog.*')" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg !text-slate-100 hover:bg-brand-secondary hover:text-amber-100 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                Katalog Barang
+            </x-nav-link>
             @endif
         </nav>
     </div>

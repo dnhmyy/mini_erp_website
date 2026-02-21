@@ -16,18 +16,33 @@ class PermintaanController extends Controller
 {
     public function index(Request $request)
     {
-        $kategori = $request->query('kategori', 'BB');
+        $kategori = $request->query('kategori'); // Removed default 'BB'
+        $query = Permintaan::with(['cabang', 'user']); // Kept Permintaan, assuming PermintaanBarang was a typo
 
-        $query = Permintaan::with(['cabang', 'user'])
-            ->where('kategori', $kategori)
-            ->latest();
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('no_request', 'like', "%{$search}%")
+                  ->orWhereHas('cabang', function($cq) use ($search) {
+                      $cq->where('nama', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
 
         // Branch-level roles only see their own branch's requests
         if (auth()->user()->isBranchLevel()) {
             $query->where('cabang_id', auth()->user()->cabang_id);
         }
 
-        $requests = $query->paginate(30)->appends($request->query());
+        $requests = $query->latest()->paginate(30)->appends($request->query());
+        
         return view('permintaan.index', compact('requests', 'kategori'));
     }
 

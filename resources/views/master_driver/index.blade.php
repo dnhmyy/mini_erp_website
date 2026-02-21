@@ -18,6 +18,27 @@
             </div>
         @endif
 
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-6">
+            <form action="{{ route('master-driver.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <div class="flex-1">
+                    <label for="search" class="sr-only">Cari Kurir</label>
+                    <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                           @input.debounce.500ms="$el.form.submit()"
+                           placeholder="Cari berdasarkan nama..." 
+                           class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
+                </div>
+                
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-700 active:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    Cari
+                </button>
+                @if(request('search'))
+                <a href="{{ route('master-driver.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 transition ease-in-out duration-150">
+                    Reset
+                </a>
+                @endif
+            </form>
+        </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">

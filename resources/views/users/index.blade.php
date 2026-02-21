@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        User Management
+        User Control
     </x-slot>
 
     <div class="space-y-6">
@@ -24,6 +24,27 @@
             </div>
         @endif
 
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-6">
+            <form action="{{ route('users.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <div class="flex-1">
+                    <label for="search" class="sr-only">Cari User</label>
+                    <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                           @input.debounce.500ms="$el.form.submit()"
+                           placeholder="Cari berdasarkan nama, email, atau cabang..." 
+                           class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
+                </div>
+                
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-slate-800 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-700 active:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    Cari
+                </button>
+                @if(request('search'))
+                <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 transition ease-in-out duration-150">
+                    Reset
+                </a>
+                @endif
+            </form>
+        </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -43,8 +64,12 @@
                                 <td class="px-6 py-4 text-slate-600">{{ $users->firstItem() + $loop->index }}</td>
                                 <td class="px-6 py-4 font-medium text-slate-700">{{ $user->name }}</td>
                                 <td class="px-6 py-4 text-slate-600">{{ $user->email }}</td>
-                                <td class="px-6 py-4 text-slate-600 uppercase text-xs">{{ str_replace('_', ' ', $user->role) }}</td>
-                                <td class="px-6 py-4 text-slate-600">{{ $user->cabang->nama ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                     <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-slate-100 text-slate-700">
+                                         {{ str_replace('_', ' ', $user->role) }}
+                                     </span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600 font-semibold">{{ $user->cabang->nama ?? '-' }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center space-x-3">
                                         <a href="{{ route('users.edit', $user) }}" class="text-blue-600 hover:text-blue-800">

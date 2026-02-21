@@ -22,7 +22,10 @@
             <form action="{{ route('master-produk.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <div class="flex-1">
                     <label for="search" class="sr-only">Cari Produk</label>
-                    <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Cari berdasarkan Kode/Nama Produk..." class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
+                    <input type="text" name="search" id="search" value="{{ request('search') }}" 
+                           @input.debounce.500ms="$el.form.submit()"
+                           placeholder="Cari berdasarkan Kode/Nama Produk..." 
+                           class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
                 </div>
                 
                 <div class="w-full sm:w-48">
