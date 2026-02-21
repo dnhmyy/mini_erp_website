@@ -7,13 +7,9 @@ use Illuminate\Http\Request;
 
 class MasterDriverController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = MasterDriver::query();
-        if ($request->filled('search')) {
-            $query->where('nama', 'like', "%{$request->search}%");
-        }
-        $drivers = $query->latest()->paginate(30)->appends($request->query());
+        $drivers = MasterDriver::latest()->paginate(30);
         return view('master_driver.index', compact('drivers'));
     }
 
