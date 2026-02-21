@@ -52,19 +52,19 @@
             </x-nav-link>
 
             <div class="pl-4 space-y-1">
-                <x-nav-link :href="route('master-produk.index')" :active="request()->routeIs('master-produk.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                <x-nav-link :href="route('master-produk.index')" :active="request()->routeIs('master-produk.*')" class="flex items-center px-4 py-1.5 text-xs font-semibold rounded-lg !text-slate-300 hover:bg-white/10 hover:!text-white transition-colors duration-200 {{ request()->routeIs('master-produk.*') ? 'bg-white/10 !text-amber-100 border-l-2 border-amber-400 rounded-l-none' : '' }}">
                     Master Produk
                 </x-nav-link>
 
-                <x-nav-link :href="route('cabang.index')" :active="request()->routeIs('cabang.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                <x-nav-link :href="route('cabang.index')" :active="request()->routeIs('cabang.*')" class="flex items-center px-4 py-1.5 text-xs font-semibold rounded-lg !text-slate-300 hover:bg-white/10 hover:!text-white transition-colors duration-200 {{ request()->routeIs('cabang.*') ? 'bg-white/10 !text-amber-100 border-l-2 border-amber-400 rounded-l-none' : '' }}">
                     Daftar Cabang
                 </x-nav-link>
 
-                <x-nav-link :href="route('master-driver.index')" :active="request()->routeIs('master-driver.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                <x-nav-link :href="route('master-driver.index')" :active="request()->routeIs('master-driver.*')" class="flex items-center px-4 py-1.5 text-xs font-semibold rounded-lg !text-slate-300 hover:bg-white/10 hover:!text-white transition-colors duration-200 {{ request()->routeIs('master-driver.*') ? 'bg-white/10 !text-amber-100 border-l-2 border-amber-400 rounded-l-none' : '' }}">
                     Daftar Kurir
                 </x-nav-link>
 
-                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="flex items-center px-4 py-1.5 text-xs font-medium rounded-lg !text-slate-300 hover:bg-brand-secondary/50 hover:text-white transition-colors duration-200">
+                <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="flex items-center px-4 py-1.5 text-xs font-semibold rounded-lg !text-slate-300 hover:bg-white/10 hover:!text-white transition-colors duration-200 {{ request()->routeIs('users.*') ? 'bg-white/10 !text-amber-100 border-l-2 border-amber-400 rounded-l-none' : '' }}">
                     User Control
                 </x-nav-link>
             </div>

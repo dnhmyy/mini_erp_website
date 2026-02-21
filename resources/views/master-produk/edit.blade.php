@@ -5,20 +5,71 @@
 
     <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mx-auto">
         <div class="p-8">
-            <form action="{{ route('master-produk.update', $masterProduk) }}" method="POST" class="space-y-6">
+            <form action="{{ route('master-produk.update', $masterProduk) }}" method="POST" class="space-y-6" x-data="{ 
+                open: false, 
+                search: '', 
+                catalog: {{ $catalog->map(fn($item) => ['id' => $item->id, 'kode' => $item->kode, 'nama' => $item->nama, 'satuan' => $item->satuan])->toJson() }},
+                selectedNama: '{{ old('nama_produk', $masterProduk->nama_produk) }}',
+                selectedKode: '{{ old('kode_produk', $masterProduk->kode_produk) }}',
+                selectedSatuan: '{{ old('satuan', $masterProduk->satuan) }}',
+                get filteredCatalog() {
+                    if (this.search === '') return this.catalog.slice(0, 50);
+                    return this.catalog.filter(item => 
+                        item.nama.toLowerCase().includes(this.search.toLowerCase()) || 
+                        item.kode.toLowerCase().includes(this.search.toLowerCase())
+                    ).slice(0, 50);
+                },
+                selectItem(item) {
+                    this.selectedNama = item.nama;
+                    this.selectedKode = item.kode;
+                    this.selectedSatuan = item.satuan;
+                    this.open = false;
+                    this.search = '';
+                }
+            }">
                 @csrf
                 @method('PUT')
-                <div>
-                    <label for="kode_produk" class="block text-sm font-medium text-slate-700 mb-1">Kode Produk</label>
-                    <input type="text" name="kode_produk" id="kode_produk" value="{{ old('kode_produk', $masterProduk->kode_produk) }}" required class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
-                    @error('kode_produk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                
+                <!-- Searchable Select for Product Catalog -->
+                <div class="relative">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Cari dari Katalog (Ubah Nama/Kode)</label>
+                    <button type="button" @click="open = !open" class="relative w-full bg-white border border-slate-200 rounded-lg py-2.5 pl-3 pr-10 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
+                        <span class="block truncate" x-text="selectedNama"></span>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                <path d="M7 7l3-3 3 3m0 6l-3 3-3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                    </button>
+
+                    <div x-show="open" @click.away="open = false" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="absolute z-50 mt-1 w-full bg-white shadow-2xl max-h-80 rounded-xl py-2 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                        
+                        <div class="sticky top-0 z-10 bg-white px-3 py-2 border-b border-slate-100">
+                            <input type="text" x-model="search" placeholder="Ketik nama atau kode produk..." 
+                                   class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
+                        </div>
+
+                        <ul class="divide-y divide-slate-50">
+                            <template x-for="item in filteredCatalog" :key="item.id">
+                                <li @click="selectItem(item)" 
+                                    class="text-slate-900 cursor-pointer select-none relative py-3 pl-3 pr-9 hover:bg-brand-primary hover:text-white transition-colors group">
+                                    <div class="flex flex-col">
+                                        <span class="font-bold block truncate" x-text="item.nama"></span>
+                                        <span class="text-xs text-slate-500 group-hover:text-amber-100" x-text="'Kode: ' + item.kode + ' | Satuan: ' + item.satuan"></span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </div>
 
-                <div>
-                    <label for="nama_produk" class="block text-sm font-medium text-slate-700 mb-1">Nama Produk</label>
-                    <input type="text" name="nama_produk" id="nama_produk" value="{{ old('nama_produk', $masterProduk->nama_produk) }}" required class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
-                    @error('nama_produk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                </div>
+                <!-- Hidden inputs for form submission -->
+                <input type="hidden" name="nama_produk" :value="selectedNama">
+                <input type="hidden" name="kode_produk" :value="selectedKode">
 
                 <div>
                     <label for="kategori" class="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
@@ -33,14 +84,13 @@
                 <div id="target_role_wrap">
                     <label for="target_role" class="block text-sm font-medium text-slate-700 mb-1">Dipakai Oleh (Target Role)</label>
                     <select name="target_role" id="target_role" class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
-                        <option value="">-- Tidak Dispesifikasi --</option>
+                        <option value="">-- Semua Staff Cabang --</option>
                         <option value="staff_admin" {{ old('target_role', $masterProduk->target_role) == 'staff_admin' ? 'selected' : '' }}>Staff Admin</option>
                         <option value="staff_produksi" {{ old('target_role', $masterProduk->target_role) == 'staff_produksi' ? 'selected' : '' }}>Staff Produksi</option>
                         <option value="staff_dapur" {{ old('target_role', $masterProduk->target_role) == 'staff_dapur' ? 'selected' : '' }}>Staff Dapur</option>
                         <option value="staff_pastry" {{ old('target_role', $masterProduk->target_role) == 'staff_pastry' ? 'selected' : '' }}>Staff Pastry</option>
                         <option value="all" {{ old('target_role', $masterProduk->target_role) == 'all' ? 'selected' : '' }}>Semua (Semua Staff Cabang)</option>
                     </select>
-                    <p class="mt-1 text-xs text-slate-500 italic">Tentukan siapa yang boleh request produk ini. Pilih "Semua" jika berlaku untuk semua staff cabang.</p>
                     @error('target_role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 
@@ -56,12 +106,11 @@
                             </label>
                         @endforeach
                     </div>
-                    <p class="mt-2 text-xs text-slate-500 italic">Kosongkan jika produk ini tersedia untuk semua cabang.</p>
                 </div>
 
                 <div>
                     <label for="satuan" class="block text-sm font-medium text-slate-700 mb-1">Satuan</label>
-                    <input type="text" name="satuan" id="satuan" value="{{ old('satuan', $masterProduk->satuan) }}" required class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
+                    <input type="text" name="satuan" id="satuan" :value="selectedSatuan" @input="selectedSatuan = $event.target.value" required class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition bg-slate-50" readonly>
                     @error('satuan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 
@@ -76,16 +125,4 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function toggleTargetRole(select) {
-            const wrap = document.getElementById('target_role_wrap');
-            if (['BB', 'ISIAN'].includes(select.value)) {
-                wrap.classList.remove('hidden');
-            } else {
-                wrap.classList.add('hidden');
-                document.getElementById('target_role').value = '';
-            }
-        }
-    </script>
 </x-app-layout>

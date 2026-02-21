@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\MasterProduk;
+use App\Models\ProductCatalog;
 
 class MasterProdukController extends Controller
 {
@@ -35,7 +36,8 @@ class MasterProdukController extends Controller
     public function create()
     {
         $cabangs = \App\Models\Cabang::all();
-        return view('master-produk.create', compact('cabangs'));
+        $catalog = ProductCatalog::orderBy('nama')->get();
+        return view('master-produk.create', compact('cabangs', 'catalog'));
     }
 
     public function store(Request $request)
@@ -62,8 +64,9 @@ class MasterProdukController extends Controller
     public function edit(MasterProduk $masterProduk)
     {
         $cabangs = \App\Models\Cabang::all();
+        $catalog = ProductCatalog::orderBy('nama')->get();
         $masterProduk->load('cabangs');
-        return view('master-produk.edit', compact('masterProduk', 'cabangs'));
+        return view('master-produk.edit', compact('masterProduk', 'cabangs', 'catalog'));
     }
 
     public function update(Request $request, MasterProduk $masterProduk)

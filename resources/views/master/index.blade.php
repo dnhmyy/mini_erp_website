@@ -29,7 +29,7 @@
                     @endif
                 </div>
                 
-                <h3 class="text-xl font-bold text-slate-800 mb-1 capitalize">{{ $key }}</h3>
+                <h3 class="text-xl font-bold text-slate-800 mb-1 uppercase">{{ $key }}</h3>
                 <div class="text-3xl font-extrabold text-brand-primary mb-4">{{ $data['total'] }}</div>
                 
                 @if($key === 'produk')
