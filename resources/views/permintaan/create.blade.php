@@ -14,6 +14,18 @@
                 @csrf
                 <input type="hidden" name="kategori" value="{{ $kategori }}">
 
+                @if(auth()->user()->isSuperUser())
+                <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
+                    <label for="cabang_id" class="block text-sm font-bold text-amber-800 mb-1">Pilih Cabang Tujuan</label>
+                    <select name="cabang_id" id="cabang_id" required class="block w-full rounded-lg border-amber-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
+                        <option value="">-- Hubungkan Permintaan ke Cabang --</option>
+                        @foreach($cabangs as $cabang)
+                            <option value="{{ $cabang->id }}">{{ $cabang->nama }}</option>
+                        @endforeach
+                    </select>
+                    @error('cabang_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <p class="mt-1 text-xs text-amber-600">Sebagai Super Admin, Anda harus menentukan cabang mana yang meminta barang ini.</p>
+                </div>
                 @endif
 
                 @if(in_array(auth()->user()->role, ['staff_dapur', 'staff_pastry', 'mixing']))
