@@ -44,8 +44,8 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi,staff_dapur,staff_pastry',
-            'cabang_id' => 'required_if:role,staff_admin,staff_produksi,staff_dapur,staff_pastry|nullable|exists:cabangs,id',
+            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing',
+            'cabang_id' => 'required_if:role,staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing|nullable|exists:cabangs,id',
         ]);
 
         User::create([
@@ -53,7 +53,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'cabang_id' => in_array($request->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry']) ? $request->cabang_id : null,
+            'cabang_id' => in_array($request->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing']) ? $request->cabang_id : null,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
@@ -70,15 +70,15 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi,staff_dapur,staff_pastry',
-            'cabang_id' => 'required_if:role,staff_admin,staff_produksi,staff_dapur,staff_pastry|nullable|exists:cabangs,id',
+            'role' => 'required|in:superuser,staff_gudang,staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing',
+            'cabang_id' => 'required_if:role,staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing|nullable|exists:cabangs,id',
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'cabang_id' => in_array($request->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry']) ? $request->cabang_id : null,
+            'cabang_id' => in_array($request->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing']) ? $request->cabang_id : null,
         ];
 
         if ($request->filled('password')) {
