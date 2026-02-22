@@ -39,7 +39,7 @@
                     </div>
 
                     @php
-                        $isShipping = (in_array($permintaan->status, ['approved', 'received_partial']) && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser()));
+                        $isShipping = (in_array($permintaan->status, ['approved', 'received_partial']) && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser() || auth()->user()->isStaffAdmin()));
                         $isReceiving = ($permintaan->status === 'shipped' && auth()->user()->isBranchLevel());
                     @endphp
 
@@ -126,7 +126,15 @@
                     </div>
 
                     @if($isShipping)
-                        @if(!$permintaan->gudang_asal || !$permintaan->gudang_tujuan)
+                        @php
+                            $showWarehouseFields = auth()->user()->isSuperUser() || auth()->user()->isStaffGudang();
+                            // Also show for Staff Admin but ONLY if requester is Dapur, Pastry, or Mixing
+                            if (auth()->user()->isStaffAdmin() && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
+                                $showWarehouseFields = true;
+                            }
+                        @endphp
+
+                        @if($showWarehouseFields && (!$permintaan->gudang_asal || !$permintaan->gudang_tujuan))
                         <div class="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-50/50 border-t border-slate-100">
                             <div>
                                 <label for="gudang_asal" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Gudang Asal</label>

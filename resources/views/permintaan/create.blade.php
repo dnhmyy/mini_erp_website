@@ -28,7 +28,7 @@
                 </div>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['staff_admin', 'superuser']))
+                @if(auth()->user()->isSuperUser())
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6">
                     <div>
                         <label for="gudang_asal" class="block text-sm font-bold text-slate-700 mb-2">Gudang Asal</label>
