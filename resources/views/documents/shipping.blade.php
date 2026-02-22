@@ -58,16 +58,8 @@
         <tr>
             <td class="label">NO. SURAT JALAN</td>
             <td>: SJ-{{ $permintaan->no_request }}</td>
-            
-            @if(!$isSpecial)
-            <td class="label">PENGIRIM</td>
-            <td style="font-weight: bold;">: 
-                {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}
-            </td>
-            @else
-            <td class="label"></td>
-            <td></td>
-            @endif
+            <td class="label">TGL. KIRIM</td>
+            <td>: {{ strtoupper(now()->translatedFormat('d F Y')) }}</td>
         </tr>
 
         @if($isSpecial)
@@ -77,37 +69,25 @@
             <td class="label">GUDANG TUJUAN</td>
             <td style="font-weight: bold;">: {{ strtoupper($permintaan->gudang_tujuan ?? '-') }}</td>
         </tr>
-        @endif
-
+        @else
         <tr>
-            <td class="label">TGL. KIRIM</td>
-            <td>: {{ strtoupper(now()->translatedFormat('d F Y')) }}</td>
-            
-            @if(!$isSpecial)
+            <td class="label">PENGIRIM</td>
+            <td style="font-weight: bold;">: {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}</td>
             <td class="label">TUJUAN (CABANG)</td>
             <td style="font-weight: bold;">: {{ strtoupper($permintaan->cabang->nama ?? '-') }}</td>
-            @else
-            <td class="label"></td>
-            <td></td>
-            @endif
         </tr>
         <tr>
-            @if($permintaan->driver)
-            <td class="label">NAMA DRIVER</td>
-            <td style="font-weight: bold;">: {{ strtoupper($permintaan->driver) }}</td>
-            @else
-            <td class="label"></td>
-            <td></td>
-            @endif
-
-            @if(!$isSpecial)
             <td class="label">ALAMAT TUJUAN</td>
-            <td>: {{ strtoupper($permintaan->cabang->alamat ?? '-') }}</td>
-            @else
-            <td class="label"></td>
-            <td></td>
-            @endif
+            <td colspan="3">: {{ strtoupper($permintaan->cabang->alamat ?? '-') }}</td>
         </tr>
+        @endif
+
+        @if($permintaan->driver)
+        <tr>
+            <td class="label">NAMA DRIVER</td>
+            <td colspan="3">: {{ strtoupper($permintaan->driver) }}</td>
+        </tr>
+        @endif
     </table>
 
     <table class="content-table">
