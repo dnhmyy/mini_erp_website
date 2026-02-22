@@ -26,9 +26,14 @@ class MasterProdukController extends Controller
             'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,all',
             'catalog_ids' => 'required|array',
             'catalog_ids.*' => 'exists:product_catalogs,id',
+            'cabang_ids' => 'nullable|array',
+            'cabang_ids.*' => 'exists:cabangs,id',
         ]);
 
-        $allCabangIds = \App\Models\Cabang::pluck('id')->toArray();
+        $cabangIds = $request->filled('cabang_ids') 
+            ? $request->cabang_ids 
+            : \App\Models\Cabang::pluck('id')->toArray();
+            
         $selectedCatalogs = ProductCatalog::whereIn('id', $request->catalog_ids)->get();
 
         \DB::beginTransaction();
@@ -44,8 +49,8 @@ class MasterProdukController extends Controller
                     ]
                 );
 
-                // Hubungkan ke semua cabang
-                $produk->cabangs()->sync($allCabangIds);
+                // Hubungkan ke cabang terpilih (atau semua jika tidak ada yang dipilih)
+                $produk->cabangs()->sync($cabangIds);
             }
             \DB::commit();
             return redirect()->route('master-produk.index')->with('success', count($selectedCatalogs) . ' produk berhasil ditambahkan secara batch.');
