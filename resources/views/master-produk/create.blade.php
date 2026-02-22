@@ -126,14 +126,15 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-8 border-t border-slate-100">
-                    <p class="text-[10px] text-slate-400 italic max-w-xs leading-relaxed">* Produk tanpa cabang terpilih akan tersedia secara otomatis untuk SEMUA cabang.</p>
-                    <div class="flex items-center space-x-6">
-                        <a href="{{ route('master-produk.index') }}" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition tracking-widest uppercase">Batal</a>
-                        <button type="submit" class="inline-flex items-center px-10 py-3.5 bg-brand-primary text-white text-sm font-bold rounded-xl hover:bg-brand-secondary transition-all shadow-xl hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:scale-95 active:translate-y-0">
-                            Simpan ke Master
-                        </button>
-                    </div>
+                <div class="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100 mt-6">
+                    <p class="text-[10px] text-slate-400 italic flex-1">* Produk tanpa cabang terpilih akan tersedia secara otomatis untuk SEMUA cabang.</p>
+                    <a href="{{ route('master-produk.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                        Batal
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-brand-primary border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-brand-secondary active:bg-brand-secondary active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm hover:shadow-md">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Simpan Master
+                    </button>
                 </div>
             </form>
         </div>

@@ -19,7 +19,7 @@ class ProductCatalogController extends Controller
             });
         }
 
-        $items = $query->orderBy('nama')->paginate(30)->appends($request->query());
+        $items = $query->orderBy('nama')->paginate(30)->onEachSide(1)->appends($request->query());
         
         if ($request->ajax()) {
             return view('product-catalog.partials.table', compact('items'))->render();

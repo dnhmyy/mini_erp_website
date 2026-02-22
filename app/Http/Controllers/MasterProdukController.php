@@ -36,7 +36,7 @@ class MasterProdukController extends Controller
         }
 
         $productNames = MasterProduk::distinct()->pluck('nama_produk')->sort();
-        $produks = $query->latest()->paginate(30)->appends($request->query());
+        $produks = $query->latest()->paginate(30)->onEachSide(1)->appends($request->query());
 
         if ($request->ajax()) {
             return view('master-produk.partials.table', compact('produks'))->render();
