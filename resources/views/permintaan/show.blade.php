@@ -128,11 +128,10 @@
                     @if($isShipping)
                         @php
                             $user = auth()->user();
+                            $isRequesterSpecial = in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing']);
                             $showWarehouseFields = false;
                             
-                            if ($user->isStaffGudang()) {
-                                $showWarehouseFields = true;
-                            } elseif (($user->isSuperUser() || $user->isStaffAdmin()) && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
+                            if ($isRequesterSpecial && ($user->isStaffGudang() || $user->isSuperUser() || $user->isStaffAdmin())) {
                                 $showWarehouseFields = true;
                             }
                         @endphp
