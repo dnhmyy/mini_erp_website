@@ -19,7 +19,7 @@
         @endif
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-6">
-            <form action="{{ route('master-produk.index') }}" method="GET" class="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-3">
+            <form action="{{ route('master-produk.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-3">
                 <div class="flex-1 min-w-[200px]">
                     <label for="search" class="sr-only">Cari Kode/Nama</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}" 
@@ -28,19 +28,19 @@
                            class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
                 </div>
 
-                <div class="w-full lg:w-40">
+                <div class="w-full md:w-48">
                     <label for="kategori" class="sr-only">Kategori</label>
                     <select name="kategori" id="kategori" 
                             onchange="this.form.dispatchEvent(new Event('submit'))"
                             class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
-                        <option value="">-- Kategori --</option>
+                        <option value="">-- Semua Kategori --</option>
                         <option value="BB" {{ request('kategori') == 'BB' ? 'selected' : '' }}>Bahan Baku</option>
                         <option value="ISIAN" {{ request('kategori') == 'ISIAN' ? 'selected' : '' }}>Isian</option>
                         <option value="GA" {{ request('kategori') == 'GA' ? 'selected' : '' }}>General Affair</option>
                     </select>
                 </div>
 
-                <div class="w-full lg:w-40">
+                <div class="w-full md:w-56">
                     <label for="target_role" class="sr-only">Role Pengguna</label>
                     <select name="target_role" id="target_role" 
                             onchange="this.form.dispatchEvent(new Event('submit'))"
@@ -54,11 +54,11 @@
                     </select>
                 </div>
 
-                <button type="submit" class="lg:hidden inline-flex items-center px-4 py-2 bg-slate-800 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-700 active:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                <button type="submit" class="md:hidden inline-flex items-center justify-center px-4 py-2 bg-slate-800 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-slate-700 active:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Cari & Filter
                 </button>
-                @if(request('search') || request('nama_produk') || request('kategori') || request('target_role'))
-                <a href="{{ route('master-produk.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 transition ease-in-out duration-150">
+                @if(request('search') || request('kategori') || request('target_role'))
+                <a href="{{ route('master-produk.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 transition ease-in-out duration-150">
                     Reset
                 </a>
                 @endif
