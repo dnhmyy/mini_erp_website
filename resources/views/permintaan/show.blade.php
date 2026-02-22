@@ -127,9 +127,12 @@
 
                     @if($isShipping)
                         @php
-                            $showWarehouseFields = auth()->user()->isSuperUser() || auth()->user()->isStaffGudang();
-                            // Also show for Staff Admin but ONLY if requester is Dapur, Pastry, or Mixing
-                            if (auth()->user()->isStaffAdmin() && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
+                            $user = auth()->user();
+                            $showWarehouseFields = false;
+                            
+                            if ($user->isSuperUser() || $user->isStaffGudang()) {
+                                $showWarehouseFields = true;
+                            } elseif ($user->isStaffAdmin() && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
                                 $showWarehouseFields = true;
                             }
                         @endphp
