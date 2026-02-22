@@ -29,7 +29,7 @@
                 <div class="flex-1">
                     <label for="search" class="sr-only">Cari User</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                           @input.debounce.500ms="$el.form.submit()"
+                           oninput="this.form.dispatchEvent(new Event('submit'))"
                            placeholder="Cari berdasarkan nama, email, atau cabang..." 
                            class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
                 </div>
