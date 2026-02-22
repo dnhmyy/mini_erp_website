@@ -117,11 +117,35 @@
                     </div>
 
                     @if($isShipping)
+                        @if(!$permintaan->gudang_asal || !$permintaan->gudang_tujuan)
+                        <div class="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-50/50 border-t border-slate-100">
+                            <div>
+                                <label for="gudang_asal" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Gudang Asal</label>
+                                <select name="gudang_asal" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">-- Pilih Gudang Asal --</option>
+                                    <option value="GUDANG CENTRAL - GA">GUDANG CENTRAL - GA</option>
+                                    <option value="GUDANG CENTRAL - KECIL">GUDANG CENTRAL - KECIL</option>
+                                    <option value="GUDANG CENTRAL - ISIAN">GUDANG CENTRAL - ISIAN</option>
+                                    <option value="GUDANG CENTRAL - PREMIX">GUDANG CENTRAL - PREMIX</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="gudang_tujuan" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Gudang Tujuan</label>
+                                <select name="gudang_tujuan" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white focus:ring-purple-500 focus:border-purple-500">
+                                    <option value="">-- Pilih Gudang Tujuan --</option>
+                                    <option value="Central Kitchen">Central Kitchen</option>
+                                    <option value="Mixing">Mixing</option>
+                                    <option value="Pastry">Pastry</option>
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
                         <div class="px-6 py-4 bg-purple-50 border-t border-slate-100 flex items-center justify-between flex-wrap gap-4">
                             <div class="flex items-center space-x-2">
                                 <label class="text-xs font-bold text-slate-600">PILIH KURIR:</label>
-                                <select name="driver" required class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-purple-500 bg-white">
-                                    <option value="">-- Kurir --</option>
+                                <select name="driver" class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-purple-500 bg-white">
+                                    <option value="">-- Kurir (Opsional) --</option>
                                     @foreach($drivers as $driver)
                                         <option value="{{ $driver->nama }}">{{ $driver->nama }}</option>
                                     @endforeach

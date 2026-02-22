@@ -58,15 +58,18 @@
         <tr>
             <td class="label">NO. SURAT JALAN</td>
             <td>: SJ-{{ $permintaan->no_request }}</td>
+            
+            @if(!$isSpecial)
             <td class="label">PENGIRIM</td>
             <td style="font-weight: bold;">: 
-                @if($isSpecial)
-                    {{ strtoupper($permintaan->gudang_asal ?? '-') }}
-                @else
-                    {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}
-                @endif
+                {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}
             </td>
+            @else
+            <td class="label"></td>
+            <td></td>
+            @endif
         </tr>
+
         @if($isSpecial)
         <tr>
             <td class="label">GUDANG ASAL</td>
@@ -75,17 +78,35 @@
             <td style="font-weight: bold;">: {{ strtoupper($permintaan->gudang_tujuan ?? '-') }}</td>
         </tr>
         @endif
+
         <tr>
             <td class="label">TGL. KIRIM</td>
             <td>: {{ strtoupper(now()->translatedFormat('d F Y')) }}</td>
+            
+            @if(!$isSpecial)
             <td class="label">TUJUAN (CABANG)</td>
             <td style="font-weight: bold;">: {{ strtoupper($permintaan->cabang->nama ?? '-') }}</td>
+            @else
+            <td class="label"></td>
+            <td></td>
+            @endif
         </tr>
         <tr>
+            @if($permintaan->driver)
             <td class="label">NAMA DRIVER</td>
-            <td style="font-weight: bold;">: {{ strtoupper($permintaan->driver ?? '-') }}</td>
+            <td style="font-weight: bold;">: {{ strtoupper($permintaan->driver) }}</td>
+            @else
+            <td class="label"></td>
+            <td></td>
+            @endif
+
+            @if(!$isSpecial)
             <td class="label">ALAMAT TUJUAN</td>
             <td>: {{ strtoupper($permintaan->cabang->alamat ?? '-') }}</td>
+            @else
+            <td class="label"></td>
+            <td></td>
+            @endif
         </tr>
     </table>
 

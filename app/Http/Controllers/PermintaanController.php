@@ -174,7 +174,9 @@ class PermintaanController extends Controller
         if (auth()->user()->isBranchLevel()) abort(403);
 
         $request->validate([
-            'driver' => 'required|string|max:255',
+            'driver' => 'nullable|string|max:255',
+            'gudang_asal' => 'nullable|string|max:255',
+            'gudang_tujuan' => 'nullable|string|max:255',
             'items' => 'required|array',
             'items.*.id' => 'required|exists:permintaan_details,id',
             'items.*.qty_dikirim' => 'required|integer|min:0',
@@ -187,10 +189,19 @@ class PermintaanController extends Controller
                     ->update(['qty_dikirim' => $item['qty_dikirim']]);
             }
 
-            $permintaan->update([
+            $updateData = [
                 'status' => 'shipped',
                 'driver' => $request->driver,
-            ]);
+            ];
+
+            if ($request->filled('gudang_asal')) {
+                $updateData['gudang_asal'] = $request->gudang_asal;
+            }
+            if ($request->filled('gudang_tujuan')) {
+                $updateData['gudang_tujuan'] = $request->gudang_tujuan;
+            }
+
+            $permintaan->update($updateData);
 
             return redirect()->back()->with('success', 'Status diperbarui menjadi "Dikirim" dengan rincian jumlah kirim.');
         });
