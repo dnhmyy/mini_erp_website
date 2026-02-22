@@ -14,12 +14,3 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
-
-// Allow GET requests for logout outside the auth middleware to gracefully handle 
-// proxy redirects or double-clicks when the user is already logged out.
-Route::get('logout', function (Illuminate\Http\Request $request) {
-    Auth::guard('web')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/');
-});

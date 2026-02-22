@@ -51,7 +51,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const filterForm = document.querySelector('form');
+            const filterForm = document.querySelector('main form');
             const tableWrapper = document.getElementById('main-table-wrapper');
 
             if (filterForm && tableWrapper) {
