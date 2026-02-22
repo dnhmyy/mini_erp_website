@@ -39,7 +39,7 @@
                     </div>
 
                     @php
-                        $isShipping = ($permintaan->status === 'approved' && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser()));
+                        $isShipping = (in_array($permintaan->status, ['approved', 'received_partial']) && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser()));
                         $isReceiving = ($permintaan->status === 'shipped' && auth()->user()->isBranchLevel());
                     @endphp
 
@@ -54,11 +54,14 @@
                                 <tr class="border-b border-slate-100">
                                     <th class="px-6 py-3">Nama Produk</th>
                                     <th class="px-6 py-3 text-center">Request</th>
+                                    @if($permintaan->status === 'received_partial' && $isShipping)
+                                        <th class="px-6 py-3 text-center text-green-600">Diterima</th>
+                                    @endif
                                     @if(in_array($permintaan->status, ['shipped', 'received', 'received_complete', 'received_partial']) || $isShipping)
                                         <th class="px-6 py-3 text-center">Dikirim</th>
                                     @endif
-                                    @if(in_array($permintaan->status, ['received_complete', 'received_partial']) || $isReceiving)
-                                        <th class="px-6 py-3 text-center">Diterima</th>
+                                    @if((in_array($permintaan->status, ['received_complete', 'received_partial']) || $isReceiving) && !$isShipping)
+                                        <th class="px-6 py-3 text-center text-green-600">Diterima</th>
                                         <th class="px-6 py-3 text-center text-red-500">Selisih</th>
                                     @endif
                                     <th class="px-6 py-3">Satuan</th>
@@ -66,9 +69,9 @@
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 @foreach($permintaan->details as $idx => $detail)
-                                    <tr x-data="{ 
+                                    <tr class="item-row" x-data="{ 
                                         qty_dikirim: {{ $detail->qty_dikirim ?? $detail->qty }}, 
-                                        qty_terima: {{ $detail->qty_terima ?? $detail->qty_dikirim ?? $detail->qty }} 
+                                        qty_terima: {{ $detail->qty_terima ?? 0 }} 
                                     }">
                                         <td class="px-6 py-4 font-medium text-slate-700">
                                             {{ $detail->produk->nama_produk }}
@@ -76,6 +79,12 @@
                                         </td>
                                         <td class="px-6 py-4 text-center text-slate-600 font-semibold">{{ $detail->qty }}</td>
                                         
+                                        @if($permintaan->status === 'received_partial' && $isShipping)
+                                            <td class="px-6 py-4 text-center text-green-600 font-bold">
+                                                {{ $detail->qty_terima ?? 0 }}
+                                            </td>
+                                        @endif
+
                                         @if($isShipping)
                                             <td class="px-6 py-4 text-center">
                                                 <input type="number" name="items[{{ $idx }}][qty_dikirim]" 
@@ -100,7 +109,7 @@
                                                 :class="(qty_terima - {{ $detail->qty_dikirim ?? $detail->qty }}) < 0 ? 'text-red-500' : 'text-slate-400'">
                                                 <span x-text="qty_terima - {{ $detail->qty_dikirim ?? $detail->qty }}"></span>
                                             </td>
-                                        @elseif(in_array($permintaan->status, ['received_complete', 'received_partial']))
+                                        @elseif(in_array($permintaan->status, ['received_complete', 'received_partial']) && !$isShipping)
                                             <td class="px-6 py-4 text-center text-slate-700 font-bold">
                                                 {{ $detail->qty_terima }}
                                             </td>

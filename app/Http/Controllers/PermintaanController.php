@@ -172,6 +172,7 @@ class PermintaanController extends Controller
     public function ship(Request $request, Permintaan $permintaan)
     {
         if (auth()->user()->isBranchLevel()) abort(403);
+        if (!in_array($permintaan->status, ['approved', 'received_partial'])) abort(403, 'Hanya permintaan dengan status Disetujui atau Diterima Parsial yang dapat dikirim.');
 
         $request->validate([
             'driver' => 'nullable|string|max:255',
