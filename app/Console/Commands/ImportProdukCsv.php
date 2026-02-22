@@ -71,11 +71,17 @@ class ImportProdukCsv extends Command
         $handle = fopen($filePath, "r");
         $header = fgetcsv($handle, 1000, ","); // Ambil header
 
-        // Pastikan kolom Minimal: kode, nama, satuan
-        $expected = ['kode', 'nama', 'satuan'];
-        foreach ($expected as $col) {
+        // Pastikan kolom Minimal: kode, nama, satuan.
+        // Jika Kategori TIDAK ada di nama file, maka WAJIB ada kolom 'kategori' di CSV.
+        $requiredCols = ['kode', 'nama', 'satuan'];
+        if (!$finalKategori) {
+            $requiredCols[] = 'kategori';
+        }
+
+        foreach ($requiredCols as $col) {
             if (!in_array($col, $header)) {
-                $this->error("CSV harus memiliki kolom: " . implode(', ', $expected));
+                $this->error("CSV salah! Header harus memiliki kolom: " . implode(', ', $requiredCols));
+                $this->info("Tips: Jika kategori tidak tertulis di nama file, buat kolom 'kategori' di dalam CSV.");
                 return 1;
             }
         }
