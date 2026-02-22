@@ -59,7 +59,7 @@
                         </select>
                     </div>
 
-                    <div x-show="kategori !== 'GA'" x-transition>
+                    <div>
                         <label for="target_role" class="block text-sm font-bold text-slate-700 mb-2">Target Role</label>
                         <select name="target_role" id="target_role" x-model="target_role"
                                 class="block w-full border border-slate-200 rounded-xl py-3 px-4 focus:ring-brand-primary focus:border-brand-primary transition">

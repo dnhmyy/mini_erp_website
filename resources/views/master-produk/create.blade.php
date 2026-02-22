@@ -143,7 +143,7 @@
     <script>
         function toggleTargetRole(select) {
             const wrap = document.getElementById('target_role_wrap');
-            if (['BB', 'ISIAN'].includes(select.value)) {
+            if (['BB', 'ISIAN', 'GA'].includes(select.value)) {
                 wrap.classList.remove('opacity-25', 'pointer-events-none');
             } else {
                 wrap.classList.add('opacity-25', 'pointer-events-none');
