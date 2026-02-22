@@ -14,43 +14,64 @@
                 @csrf
                 <input type="hidden" name="kategori" value="{{ $kategori }}">
 
-                @if(auth()->user()->isSuperUser())
-                <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
-                    <label for="cabang_id" class="block text-sm font-bold text-amber-800 mb-1">Pilih Cabang Tujuan</label>
-                    <select name="cabang_id" id="cabang_id" required class="block w-full rounded-lg border-amber-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
-                        <option value="">-- Hubungkan Permintaan ke Cabang --</option>
-                        @foreach($cabangs as $cabang)
-                            <option value="{{ $cabang->id }}">{{ $cabang->nama }}</option>
-                        @endforeach
-                    </select>
-                    @error('cabang_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    <p class="mt-1 text-xs text-amber-600">Sebagai Super Admin, Anda harus menentukan cabang mana yang meminta barang ini.</p>
-                </div>
-                @endif
+                @php
+                    $user = auth()->user();
+                    $isSpecialRole = in_array($user->role, ['staff_dapur', 'staff_pastry', 'mixing']);
+                    $isAdminOrSuper = $user->isSuperUser() || $user->isStaffAdmin();
+                @endphp
 
-                @if(auth()->user()->isSuperUser())
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6">
-                    <div>
-                        <label for="gudang_asal" class="block text-sm font-bold text-slate-700 mb-2">Gudang Asal</label>
-                        <select name="gudang_asal" id="gudang_asal" required class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
-                            <option value="">-- Pilih Gudang Asal --</option>
-                            <option value="GUDANG CENTRAL - GA">GUDANG CENTRAL - GA</option>
-                            <option value="GUDANG CENTRAL - KECIL">GUDANG CENTRAL - KECIL</option>
-                            <option value="GUDANG CENTRAL - ISIAN">GUDANG CENTRAL - ISIAN</option>
-                            <option value="GUDANG CENTRAL - PREMIX">GUDANG CENTRAL - PREMIX</option>
+                <div x-data="{ 
+                    selectedCabangRole: '',
+                    isSuper: {{ $user->isSuperUser() ? 'true' : 'false' }},
+                    isAdmin: {{ $user->isStaffAdmin() ? 'true' : 'false' }},
+                    specialRoles: ['staff_dapur', 'staff_pastry', 'mixing'],
+                    updateCabangRole(e) {
+                        const opt = e.target.options[e.target.selectedIndex];
+                        this.selectedCabangRole = opt.dataset.role || '';
+                    }
+                }">
+                    @if($user->isSuperUser())
+                    <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
+                        <label for="cabang_id" class="block text-sm font-bold text-amber-800 mb-1">Pilih Cabang Tujuan</label>
+                        <select name="cabang_id" id="cabang_id" required @change="updateCabangRole" class="block w-full rounded-lg border-amber-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
+                            <option value="">-- Hubungkan Permintaan ke Cabang --</option>
+                            @foreach($cabangs as $cabang)
+                                @php
+                                    // Find a user for this cabang to get their role
+                                    $cabangUser = \App\Models\User::where('cabang_id', $cabang->id)->first();
+                                    $cabangRole = $cabangUser ? $cabangUser->role : '';
+                                @endphp
+                                <option value="{{ $cabang->id }}" data-role="{{ $cabangRole }}">{{ $cabang->nama }}</option>
+                            @endforeach
                         </select>
+                        <p class="mt-1 text-xs text-amber-600">Sebagai Super Admin, Anda harus menentukan cabang mana yang meminta barang ini.</p>
                     </div>
-                    <div>
-                        <label for="gudang_tujuan" class="block text-sm font-bold text-slate-700 mb-2">Gudang Tujuan</label>
-                        <select name="gudang_tujuan" id="gudang_tujuan" required class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
-                            <option value="">-- Pilih Gudang Tujuan --</option>
-                            <option value="Central Kitchen">Central Kitchen</option>
-                            <option value="Mixing">Mixing</option>
-                            <option value="Pastry">Pastry</option>
-                        </select>
+                    @endif
+
+                    <div x-show="(isSuper && specialRoles.includes(selectedCabangRole)) || (isAdmin && {{ $isSpecialRole ? 'true' : 'false' }})" 
+                        class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6"
+                        x-transition>
+                        <div>
+                            <label for="gudang_asal" class="block text-sm font-bold text-slate-700 mb-2">Gudang Asal</label>
+                            <select name="gudang_asal" id="gudang_asal" :required="(isSuper && specialRoles.includes(selectedCabangRole)) || (isAdmin && {{ $isSpecialRole ? 'true' : 'false' }})" class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
+                                <option value="">-- Pilih Gudang Asal --</option>
+                                <option value="GUDANG CENTRAL - GA">GUDANG CENTRAL - GA</option>
+                                <option value="GUDANG CENTRAL - KECIL">GUDANG CENTRAL - KECIL</option>
+                                <option value="GUDANG CENTRAL - ISIAN">GUDANG CENTRAL - ISIAN</option>
+                                <option value="GUDANG CENTRAL - PREMIX">GUDANG CENTRAL - PREMIX</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="gudang_tujuan" class="block text-sm font-bold text-slate-700 mb-2">Gudang Tujuan</label>
+                            <select name="gudang_tujuan" id="gudang_tujuan" :required="(isSuper && specialRoles.includes(selectedCabangRole)) || (isAdmin && {{ $isSpecialRole ? 'true' : 'false' }})" class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
+                                <option value="">-- Pilih Gudang Tujuan --</option>
+                                <option value="Central Kitchen">Central Kitchen</option>
+                                <option value="Mixing">Mixing</option>
+                                <option value="Pastry">Pastry</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                @endif
                 
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">

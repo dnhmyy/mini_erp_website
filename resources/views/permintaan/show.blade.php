@@ -130,9 +130,9 @@
                             $user = auth()->user();
                             $showWarehouseFields = false;
                             
-                            if ($user->isSuperUser() || $user->isStaffGudang()) {
+                            if ($user->isStaffGudang()) {
                                 $showWarehouseFields = true;
-                            } elseif ($user->isStaffAdmin() && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
+                            } elseif (($user->isSuperUser() || $user->isStaffAdmin()) && in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
                                 $showWarehouseFields = true;
                             }
                         @endphp
