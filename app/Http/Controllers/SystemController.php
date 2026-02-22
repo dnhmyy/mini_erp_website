@@ -20,7 +20,13 @@ class SystemController extends Controller
         // 1. Check if mysqldump is available
         $mysqlPath = shell_exec('command -v mysqldump');
         if (!$mysqlPath) {
-            return redirect()->back()->with('error', 'Gagal: Tool "mysqldump" tidak ditemukan di container. Harap jalankan "docker-compose up -d --build" untuk menginstallnya.');
+            return redirect()->back()->with('error', 'Gagal: Tool "mysqldump" tidak ditemukan. Harap jalankan "docker-compose up -d --build" untuk mengaktifkan perubahan Dockerfile.');
+        }
+
+        // 2. Check Directory Writability
+        $storagePath = storage_path('app');
+        if (!is_writable($storagePath)) {
+            return redirect()->back()->with('error', 'Gagal: Folder "' . $storagePath . '" tidak dapat ditulis oleh sistem. Hubungi Admin untuk cek izin folder (chmod).');
         }
 
         $databaseName = config('database.connections.mysql.database');
@@ -29,14 +35,9 @@ class SystemController extends Controller
         $host = config('database.connections.mysql.host');
 
         $filename = "backup-" . now()->format('Y-m-d-H-i-s') . ".sql";
-        $path = storage_path('app/' . $filename);
+        $path = $storagePath . '/' . $filename;
 
-        // Ensure directory exists
-        if (!file_exists(storage_path('app'))) {
-            mkdir(storage_path('app'), 0755, true);
-        }
-
-        // 2. Execute mysqldump
+        // 3. Execute mysqldump (redirect stderr to file to capture errors)
         $command = sprintf(
             'mysqldump --user=%s --password=%s --host=%s %s > %s 2>&1',
             escapeshellarg($userName),
@@ -48,15 +49,24 @@ class SystemController extends Controller
 
         exec($command, $output, $returnVar);
 
-        if ($returnVar !== 0 || !file_exists($path)) {
-            $errorMessage = implode(' ', $output);
-            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . ($errorMessage ?: 'Izin ditolak atau sistem terhambat.'));
+        // 4. Handle Failure
+        if ($returnVar !== 0) {
+            $errorMessage = '';
+            if (file_exists($path)) {
+                $errorMessage = file_get_contents($path);
+                unlink($path); // Delete the error log file
+            }
+            
+            // Clean up common error messages for better readability
+            $errorMessage = trim(str_replace(['mysqldump: [Warning] Using a password on the command line interface can be insecure.', 'mysqldump: '], '', $errorMessage));
+            
+            return redirect()->back()->with('error', 'Gagal Backup: ' . ($errorMessage ?: 'Terjadi kesalahan sistem yang tidak diketahui.'));
         }
 
-        // Check if file is empty
-        if (filesize($path) === 0) {
-            unlink($path);
-            return redirect()->back()->with('error', 'Gagal melakukan backup: File backup kosong.');
+        // 5. Final check for success
+        if (!file_exists($path) || filesize($path) === 0) {
+            if (file_exists($path)) unlink($path);
+            return redirect()->back()->with('error', 'Gagal Backup: File hasil backup kosong atau tidak tercipta.');
         }
 
         return Response::download($path)->deleteFileAfterSend(true);
