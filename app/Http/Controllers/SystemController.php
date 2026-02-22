@@ -25,9 +25,9 @@ class SystemController extends Controller
         $filename = "backup-" . now()->format('Y-m-d-H-i-s') . ".sql";
         $path = storage_path('app/' . $filename);
 
-        // Command to execute mysqldump
+        // Command to execute mysqldump with stderr capture
         $command = sprintf(
-            'mysqldump --user=%s --password=%s --host=%s %s > %s',
+            'mysqldump --user=%s --password=%s --host=%s %s > %s 2>&1',
             escapeshellarg($userName),
             escapeshellarg($password),
             escapeshellarg($host),
@@ -38,7 +38,8 @@ class SystemController extends Controller
         exec($command, $output, $returnVar);
 
         if ($returnVar !== 0) {
-            return redirect()->back()->with('error', 'Gagal melakukan backup database.');
+            $errorMessage = implode(' ', $output);
+            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . $errorMessage);
         }
 
         return Response::download($path)->deleteFileAfterSend(true);
