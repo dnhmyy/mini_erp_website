@@ -39,7 +39,7 @@
                     </div>
 
                     @php
-                        $isShipping = (in_array($permintaan->status, ['approved', 'received_partial']) && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser() || auth()->user()->isStaffAdmin()));
+                        $isShipping = (in_array($permintaan->status, ['approved', 'received_partial']) && (auth()->user()->isStaffGudang() || auth()->user()->isSuperUser()));
                         $isReceiving = ($permintaan->status === 'shipped' && auth()->user()->isBranchLevel());
                     @endphp
 
@@ -131,7 +131,7 @@
                             $isRequesterSpecial = in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing']);
                             $showWarehouseFields = false;
                             
-                            if ($isRequesterSpecial && ($user->isStaffGudang() || $user->isSuperUser() || $user->isStaffAdmin())) {
+                            if ($isRequesterSpecial && ($user->isStaffGudang() || $user->isSuperUser())) {
                                 $showWarehouseFields = true;
                             }
                         @endphp
