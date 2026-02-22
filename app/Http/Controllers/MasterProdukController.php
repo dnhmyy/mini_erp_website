@@ -14,8 +14,9 @@ class MasterProdukController extends Controller
         // Ambil catalog yang belum ada di master produk (opsional, tapi lebih baik)
         $existingCodes = MasterProduk::pluck('kode_produk')->toArray();
         $catalog = ProductCatalog::orderBy('nama')->get();
+        $roles = $this->getRoles();
         
-        return view('master-produk.bulk-create', compact('catalog', 'existingCodes'));
+        return view('master-produk.bulk-create', compact('catalog', 'existingCodes', 'roles'));
     }
 
     public function bulkStore(Request $request)
@@ -87,7 +88,8 @@ class MasterProdukController extends Controller
     public function create()
     {
         $catalog = ProductCatalog::orderBy('nama')->get();
-        return view('master-produk.create', compact('catalog'));
+        $roles = $this->getRoles();
+        return view('master-produk.create', compact('catalog', 'roles'));
     }
 
     public function store(Request $request)
@@ -109,7 +111,20 @@ class MasterProdukController extends Controller
     public function edit(MasterProduk $masterProduk)
     {
         $catalog = ProductCatalog::orderBy('nama')->get();
-        return view('master-produk.edit', compact('masterProduk', 'catalog'));
+        $roles = $this->getRoles();
+        return view('master-produk.edit', compact('masterProduk', 'catalog', 'roles'));
+    }
+
+    private function getRoles()
+    {
+        return [
+            'staff_admin' => 'Staff Admin',
+            'staff_produksi' => 'Staff Produksi',
+            'staff_dapur' => 'Staff Dapur',
+            'staff_pastry' => 'Staff Pastry',
+            'mixing' => 'Mixing',
+            'all' => 'Semua Staff (All)'
+        ];
     }
 
     public function update(Request $request, MasterProduk $masterProduk)
