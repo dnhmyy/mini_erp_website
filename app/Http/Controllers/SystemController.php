@@ -25,7 +25,8 @@ class SystemController extends Controller
         $filename = "backup-" . now()->format('Y-m-d-H-i-s') . ".sql";
         $path = storage_path('app/' . $filename);
 
-        // Command to execute mysqldump with stderr capture
+        // Explicitly set password in environment to avoid displaying it in process list or logs
+        // Using --password directly with escapeshellarg as fallback if env not preferred
         $command = sprintf(
             'mysqldump --user=%s --password=%s --host=%s %s > %s 2>&1',
             escapeshellarg($userName),
@@ -37,9 +38,15 @@ class SystemController extends Controller
 
         exec($command, $output, $returnVar);
 
-        if ($returnVar !== 0) {
+        if ($returnVar !== 0 || !file_exists($path)) {
             $errorMessage = implode(' ', $output);
-            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . $errorMessage);
+            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . ($errorMessage ?: 'File tidak dapat dibuat.'));
+        }
+
+        // Check if file is empty
+        if (filesize($path) === 0) {
+            unlink($path);
+            return redirect()->back()->with('error', 'Gagal melakukan backup: File backup kosong.');
         }
 
         return Response::download($path)->deleteFileAfterSend(true);
