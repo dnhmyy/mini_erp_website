@@ -13,14 +13,14 @@ class ImportProdukCsv extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-produk-csv {file : Path ke file CSV} {kategori : BB, ISIAN, atau GA} {roles* : Target roles (staff_admin, staff_produksi, dll)}';
+    protected $signature = 'app:import-produk-csv {file : Path ke file CSV} {kategori? : BB, ISIAN, atau GA (Opsional jika ada di nama file)} {roles* : Target roles (Opsional jika ada di nama file)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import Master Produk dari file CSV secara cepat';
+    protected $description = 'Import Master Produk dari file CSV (Auto-detect Kategori & Role dari nama file)';
 
     /**
      * Execute the console command.
@@ -28,11 +28,38 @@ class ImportProdukCsv extends Command
     public function handle()
     {
         $filePath = $this->argument('file');
-        $kategori = strtoupper($this->argument('kategori'));
-        $roles = $this->argument('roles');
+        $filename = pathinfo($filePath, PATHINFO_FILENAME); // misal: GA_staff_admin
+        
+        // 1. Ambil Kategori (prioritas: Argumen > Nama File)
+        $kategoriArg = $this->argument('kategori');
+        $rolesArg = $this->argument('roles');
 
-        if (!in_array($kategori, ['BB', 'ISIAN', 'GA'])) {
-            $this->error("Kategori tidak valid! Gunakan: BB, ISIAN, atau GA.");
+        $inferredKategori = null;
+        $inferredRoles = [];
+
+        // Parsing Nama File (Contoh: GA_staff_admin_staff_produksi.csv)
+        $parts = explode('_', strtolower($filename));
+        $possibleCategories = ['bb', 'isian', 'ga'];
+        $possibleRoles = ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing', 'all'];
+
+        foreach ($parts as $part) {
+            if (in_array($part, $possibleCategories)) {
+                $inferredKategori = strtoupper($part);
+            } elseif (in_array($part, $possibleRoles)) {
+                $inferredRoles[] = $part;
+            }
+        }
+
+        $finalKategori = $kategoriArg ?: $inferredKategori;
+        $finalRoles = !empty($rolesArg) ? $rolesArg : $inferredRoles;
+
+        if (!$finalKategori && !empty($finalKategori)) {
+            // Kita akan cek nanti di dalam loop apakah ada kolom kategori
+        }
+
+        if (empty($finalRoles)) {
+            $this->error("Role tidak ditemukan di argumen maupun nama file!");
+            $this->info("Contoh nama file: GA_staff_admin.csv atau BB_staff_produksi_mixing.csv");
             return 1;
         }
 
@@ -62,18 +89,25 @@ class ImportProdukCsv extends Command
 
                 $row = array_combine($header, $data);
                 
+                // Prioritas Kategori: Kolom CSV > Argumen/Nama File
+                $rowKategori = isset($row['kategori']) ? strtoupper($row['kategori']) : $finalKategori;
+
+                if (!$rowKategori) {
+                    throw new \Exception("Kategori tidak ditemukan untuk baris: " . ($count + 1) . ". Pastikan ada di Nama File atau Kolom CSV.");
+                }
+
                 $produk = MasterProduk::where('kode_produk', $row['kode'])->first();
 
                 if ($produk) {
                     // Update existing: MERGE roles
                     $existingRoles = is_array($produk->target_role) ? $produk->target_role : [];
-                    $newRoles = array_unique(array_merge($existingRoles, $roles));
+                    $mergedRoles = array_unique(array_merge($existingRoles, $finalRoles));
                     
                     $produk->update([
                         'nama_produk' => $row['nama'],
                         'satuan'      => $row['satuan'],
-                        'kategori'    => $kategori,
-                        'target_role' => $newRoles,
+                        'kategori'    => $rowKategori,
+                        'target_role' => $mergedRoles,
                     ]);
                 } else {
                     // Create new
@@ -81,15 +115,16 @@ class ImportProdukCsv extends Command
                         'kode_produk' => $row['kode'],
                         'nama_produk' => $row['nama'],
                         'satuan'      => $row['satuan'],
-                        'kategori'    => $kategori,
-                        'target_role' => $roles,
+                        'kategori'    => $rowKategori,
+                        'target_role' => $finalRoles,
                     ]);
                 }
                 $count++;
             }
             DB::commit();
-            $this->info("Berhasil mengproses {$count} produk ke kategori {$kategori}.");
-            $this->info("Target Role (Baru/Update): " . implode(', ', $roles));
+            $this->info("Berhasil memproses {$count} produk.");
+            $this->info("Kategori: " . ($finalKategori ?: 'Variatif (cek kolom CSV)'));
+            $this->info("Target Role (Baru/Update): " . implode(', ', $finalRoles));
         } catch (\Exception $e) {
             DB::rollBack();
             $this->error("Terjadi kesalahan pada baris {$count}: " . $e->getMessage());
