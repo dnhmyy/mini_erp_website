@@ -7,6 +7,7 @@ use App\Http\Controllers\CabangController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PermintaanController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\SystemController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -25,6 +26,11 @@ Route::middleware(['auth', 'role:superuser'])->group(function () {
     Route::resource('cabang', CabangController::class);
     Route::resource('users', UserController::class);
     Route::resource('master-driver', \App\Http\Controllers\MasterDriverController::class);
+
+    // System Management
+    Route::get('system', [SystemController::class, 'index'])->name('system.index');
+    Route::get('system/backup', [SystemController::class, 'backup'])->name('system.backup');
+    Route::post('system/reset-requests', [SystemController::class, 'resetRequests'])->name('system.reset-requests');
 });
 
 Route::middleware(['auth'])->group(function () {
