@@ -13,4 +13,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+    
+    // Allow GET requests for logout to gracefully handle proxy redirects
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy']);
 });
