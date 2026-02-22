@@ -3,9 +3,28 @@
         Master Produk
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ 
+        selectedIds: [],
+        deleteBatch() {
+            if (this.selectedIds.length === 0) return;
+            if (confirm('Apakah Anda yakin ingin menghapus ' + this.selectedIds.length + ' produk terpilih?')) {
+                $refs.batchDeleteForm.submit();
+            }
+        }
+    }">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h3 class="text-lg font-bold text-slate-800">Daftar Produk</h3>
+            <div class="flex items-center space-x-4">
+                <h3 class="text-lg font-bold text-slate-800">Daftar Produk</h3>
+                <button 
+                    x-show="selectedIds.length > 0"
+                    x-transition
+                    @click="deleteBatch()"
+                    class="inline-flex items-center px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg font-bold text-xs uppercase tracking-widest hover:bg-red-100 transition shadow-sm"
+                >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Hapus Terpilih (<span x-text="selectedIds.length"></span>)
+                </button>
+            </div>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('master-produk.bulk-create') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 transition ease-in-out duration-150">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -73,9 +92,17 @@
             </form>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" id="main-table-wrapper">
-            @include('master-produk.partials.table')
-        </div>
+        <form x-ref="batchDeleteForm" action="{{ route('master-produk.batch-delete') }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <template x-for="id in selectedIds" :key="id">
+                <input type="hidden" name="ids[]" :value="id">
+            </template>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" id="main-table-wrapper">
+                @include('master-produk.partials.table')
+            </div>
+        </form>
     </div>
 
     <script>

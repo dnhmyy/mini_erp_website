@@ -3,6 +3,12 @@
         <table class="w-full text-left">
             <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                 <tr>
+                    <th class="px-6 py-3 w-10">
+                        <input type="checkbox" 
+                               @change="if ($el.checked) { selectedIds = {{ $produks->pluck('id')->toJson() }} } else { selectedIds = [] }"
+                               :checked="selectedIds.length === {{ count($produks) }} && {{ count($produks) }} > 0"
+                               class="w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary transition">
+                    </th>
                     <th class="px-6 py-3 font-semibold">No</th>
                     <th class="px-6 py-3 font-semibold">Kode Produk</th>
                     <th class="px-6 py-3 font-semibold">Nama Produk</th>
@@ -13,7 +19,12 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
                 @forelse($produks as $produk)
-                    <tr class="hover:bg-slate-50/50 transition-colors">
+                    <tr class="hover:bg-slate-50/50 transition-colors" :class="selectedIds.includes({{ $produk->id }}) ? 'bg-brand-primary/5' : ''">
+                        <td class="px-6 py-4">
+                            <input type="checkbox" name="ids[]" value="{{ $produk->id }}" x-model="selectedIds"
+                                   @click.stop
+                                   class="w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary transition">
+                        </td>
                         <td class="px-6 py-4 text-slate-600">{{ $produks->firstItem() + $loop->index }}</td>
                         <td class="px-6 py-4 font-medium text-slate-700">{{ $produk->kode_produk }}</td>
                         <td class="px-6 py-4 text-slate-600">{{ $produk->nama_produk }}</td>
@@ -31,7 +42,7 @@
                                 <form action="{{ route('master-produk.destroy', $produk) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800">
+                                    <button type="button" @click="if(confirm('Yakin hapus?')) $el.closest('form').submit()" class="text-red-600 hover:text-red-800">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </form>
@@ -40,7 +51,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-slate-500 italic">
+                        <td colspan="7" class="px-6 py-10 text-center text-slate-500 italic">
                             Belum ada produk yang terdaftar.
                         </td>
                     </tr>

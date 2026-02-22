@@ -151,7 +151,30 @@ class MasterProdukController extends Controller
 
     public function destroy(MasterProduk $masterProduk)
     {
+        $masterProduk->cabangs()->detach();
         $masterProduk->delete();
         return redirect()->route('master-produk.index')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    public function batchDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:master_produks,id',
+        ]);
+
+        \DB::beginTransaction();
+        try {
+            $produks = MasterProduk::whereIn('id', $request->ids)->get();
+            foreach ($produks as $produk) {
+                $produk->cabangs()->detach();
+                $produk->delete();
+            }
+            \DB::commit();
+            return redirect()->route('master-produk.index')->with('success', count($request->ids) . ' produk berhasil dihapus.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan saat menghapus produk: ' . $e->getMessage());
+        }
     }
 }
