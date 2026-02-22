@@ -71,9 +71,9 @@ class ImportProdukCsv extends Command
         $handle = fopen($filePath, "r");
         $header = fgetcsv($handle, 1000, ","); // Ambil header
 
-        // Pastikan kolom Minimal: kode, nama, satuan.
+        // Pastikan kolom Minimal: nama.
         // Jika Kategori TIDAK ada di nama file, maka WAJIB ada kolom 'kategori' di CSV.
-        $requiredCols = ['kode', 'nama', 'satuan'];
+        $requiredCols = ['nama'];
         if (!$finalKategori) {
             $requiredCols[] = 'kategori';
         }
@@ -87,6 +87,7 @@ class ImportProdukCsv extends Command
         }
 
         $count = 0;
+        $skipped = 0;
         DB::beginTransaction();
         try {
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -95,6 +96,15 @@ class ImportProdukCsv extends Command
 
                 $row = array_combine($header, $data);
                 
+                // Cari data di KATALOG berdasarkan NAMA
+                $catalogItem = \App\Models\ProductCatalog::where('nama', trim($row['nama']))->first();
+
+                if (!$catalogItem) {
+                    $this->warn("Baris " . ($count + 1) . ": Produk '{$row['nama']}' tidak ditemukan di Katalog. Dilewati.");
+                    $skipped++;
+                    continue;
+                }
+
                 // Prioritas Kategori: Kolom CSV > Argumen/Nama File
                 $rowKategori = isset($row['kategori']) ? strtoupper($row['kategori']) : $finalKategori;
 
@@ -102,7 +112,7 @@ class ImportProdukCsv extends Command
                     throw new \Exception("Kategori tidak ditemukan untuk baris: " . ($count + 1) . ". Pastikan ada di Nama File atau Kolom CSV.");
                 }
 
-                $produk = MasterProduk::where('kode_produk', $row['kode'])->first();
+                $produk = MasterProduk::where('kode_produk', $catalogItem->kode)->first();
 
                 if ($produk) {
                     // Update existing: MERGE roles
@@ -110,17 +120,17 @@ class ImportProdukCsv extends Command
                     $mergedRoles = array_unique(array_merge($existingRoles, $finalRoles));
                     
                     $produk->update([
-                        'nama_produk' => $row['nama'],
-                        'satuan'      => $row['satuan'],
+                        'nama_produk' => $catalogItem->nama,
+                        'satuan'      => $catalogItem->satuan,
                         'kategori'    => $rowKategori,
                         'target_role' => $mergedRoles,
                     ]);
                 } else {
                     // Create new
                     MasterProduk::create([
-                        'kode_produk' => $row['kode'],
-                        'nama_produk' => $row['nama'],
-                        'satuan'      => $row['satuan'],
+                        'kode_produk' => $catalogItem->kode,
+                        'nama_produk' => $catalogItem->nama,
+                        'satuan'      => $catalogItem->satuan,
                         'kategori'    => $rowKategori,
                         'target_role' => $finalRoles,
                     ]);
@@ -129,6 +139,9 @@ class ImportProdukCsv extends Command
             }
             DB::commit();
             $this->info("Berhasil memproses {$count} produk.");
+            if ($skipped > 0) {
+                $this->warn("Ada {$skipped} produk yang dilewati karena tidak ada di Katalog.");
+            }
             $this->info("Kategori: " . ($finalKategori ?: 'Variatif (cek kolom CSV)'));
             $this->info("Target Role (Baru/Update): " . implode(', ', $finalRoles));
         } catch (\Exception $e) {
