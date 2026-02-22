@@ -12,6 +12,27 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
+
+    <!-- Mobile-optimized User Profile & Logout (Visible at top) -->
+    <div class="px-6 py-4 border-b border-brand-secondary bg-slate-900/10">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center overflow-hidden">
+                <div class="h-9 w-9 rounded-full bg-amber-400 text-brand-primary font-bold flex items-center justify-center shrink-0 shadow-sm ring-2 ring-white/10">
+                    {{ substr(Auth::user()->name, 0, 1) }}
+                </div>
+                <div class="ml-3 overflow-hidden">
+                    <div class="text-sm font-bold text-white truncate">{{ explode(' ', Auth::user()->name)[0] }}</div>
+                    <div class="text-[10px] text-emerald-400/80 font-bold uppercase tracking-wider">{{ str_replace('_', ' ', Auth::user()->role) }}</div>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('logout', [], false) }}" id="logout-form-top">
+                @csrf
+                <button type="submit" class="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200" title="Logout">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </form>
+        </div>
+    </div>
     <div class="flex flex-col flex-1 overflow-y-auto mt-4 min-h-0 custom-scrollbar">
         <nav class="flex-1 py-4 space-y-1">
             <a href="{{ route('dashboard') }}" class="flex items-center px-6 py-3 text-sm font-medium transition-all duration-200 active:scale-95 transform {{ request()->routeIs('dashboard') ? 'bg-white/10 text-white border-l-4 border-amber-400 shadow-inner' : 'text-slate-300 hover:bg-white/5 hover:text-white hover:-translate-y-0.5' }}">
@@ -71,15 +92,5 @@
         </nav>
     </div>
 
-    <div class="mt-auto border-t border-brand-secondary/50 bg-slate-900/10">
-        <form method="POST" action="{{ route('logout', [], false) }}" id="logout-form">
-            @csrf
-            <button type="submit" class="flex items-center w-full px-6 py-4 text-sm font-semibold text-slate-100 hover:text-red-400 transition-colors duration-300 group">
-                <div class="p-2 rounded-lg bg-slate-800/50 group-hover:bg-red-500/20 mr-3 transition-colors duration-300">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                </div>
-                Logout
-            </button>
-        </form>
-    </div>
+    <!-- Section removed from here -->
 </aside>
