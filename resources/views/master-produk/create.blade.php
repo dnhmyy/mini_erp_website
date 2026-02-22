@@ -108,6 +108,7 @@
                             <option value="staff_produksi" {{ old('target_role') == 'staff_produksi' ? 'selected' : '' }}>Staff Produksi</option>
                             <option value="staff_dapur" {{ old('target_role') == 'staff_dapur' ? 'selected' : '' }}>Staff Dapur</option>
                             <option value="staff_pastry" {{ old('target_role') == 'staff_pastry' ? 'selected' : '' }}>Staff Pastry</option>
+                            <option value="mixing" {{ old('target_role') == 'mixing' ? 'selected' : '' }}>Mixing</option>
                             <option value="all" {{ old('target_role') == 'all' ? 'selected' : '' }}>Semua (Semua Staff)</option>
                         </select>
                         @error('target_role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

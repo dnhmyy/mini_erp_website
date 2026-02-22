@@ -68,6 +68,7 @@
                             <option value="staff_produksi">Staff Produksi</option>
                             <option value="staff_dapur">Staff Dapur</option>
                             <option value="staff_pastry">Staff Pastry</option>
+                            <option value="mixing">Mixing</option>
                             <option value="all">Semua (Admin & Produksi)</option>
                         </select>
                     </div>
