@@ -69,7 +69,10 @@ class MasterProdukController extends Controller
         }
 
         if ($request->filled('target_role')) {
-            $query->whereJsonContains('target_role', $request->target_role);
+            $query->where(function($q) use ($request) {
+                $q->whereJsonContains('target_role', $request->target_role)
+                  ->orWhere('target_role', $request->target_role);
+            });
         }
 
         $produks = $query->latest()->paginate(30)->onEachSide(1)->appends($request->query());

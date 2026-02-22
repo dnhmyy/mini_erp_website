@@ -71,6 +71,8 @@ class PermintaanController extends Controller
         $query->where(function($q) use ($user) {
             $q->whereJsonContains('target_role', $user->role)
               ->orWhereJsonContains('target_role', 'all')
+              ->orWhere('target_role', $user->role) // Match legacy string
+              ->orWhere('target_role', 'all')        // Match legacy string
               ->orWhereNull('target_role');
         });
 

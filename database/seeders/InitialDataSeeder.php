@@ -55,7 +55,7 @@ class InitialDataSeeder extends Seeder
                     'nama_produk' => $p['nama'],
                     'satuan'      => $p['satuan'],
                     'kategori'    => $p['kat'],
-                    'target_role' => $p['role']
+                    'target_role' => [$p['role']]
                 ]
             );
 
