@@ -59,6 +59,11 @@ class PermintaanController extends Controller
 
         $kategori = $request->query('kategori', 'BB');
 
+        // Block ISIAN for special roles
+        if ($kategori === 'ISIAN' && in_array($user->role, ['staff_dapur', 'staff_pastry', 'mixing'])) {
+            abort(403, 'Akses ke kategori Isian dibatasi untuk role Anda.');
+        }
+
         $query = MasterProduk::where('kategori', $kategori);
 
         // Filter by target_role for all categories
@@ -98,6 +103,8 @@ class PermintaanController extends Controller
             'items' => 'required|array|min:1',
             'items.*.produk_id' => 'required|exists:master_produks,id',
             'items.*.qty' => 'required|integer|min:1',
+            'gudang_asal' => 'nullable|string|max:255',
+            'gudang_tujuan' => 'nullable|string|max:255',
         ];
 
         if (auth()->user()->isSuperUser()) {
@@ -123,6 +130,8 @@ class PermintaanController extends Controller
                 'user_id' => auth()->id(),
                 'status' => 'pending',
                 'tanggal' => $now,
+                'gudang_asal' => $request->gudang_asal,
+                'gudang_tujuan' => $request->gudang_tujuan,
             ]);
 
             foreach ($request->items as $item) {

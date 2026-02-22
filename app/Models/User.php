@@ -65,9 +65,14 @@ class User extends Authenticatable
         return $this->role === 'staff_pastry';
     }
 
+    public function isMixing()
+    {
+        return $this->role === 'mixing';
+    }
+
     public function isBranchLevel()
     {
-        return in_array($this->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry']);
+        return in_array($this->role, ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing']);
     }
 
     /**

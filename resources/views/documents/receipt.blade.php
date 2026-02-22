@@ -43,18 +43,29 @@
             <td class="label">SUPPLIER</td>
             <td style="font-weight: bold;">: BAKERY SOLUTION</td>
         </tr>
+        @php
+            $isSpecial = in_array($permintaan->user->role, ['staff_dapur', 'staff_pastry', 'mixing']);
+        @endphp
         <tr>
             <td class="label">CABANG</td>
             <td>: {{ strtoupper($permintaan->cabang->nama ?? '-') }}</td>
-            <td class="label">TUJUAN</td>
+            <td class="label">
+                @if($isSpecial) GUDANG ASAL @else TUJUAN @endif
+            </td>
             <td style="font-weight: bold;">: 
-                @if($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN')
-                    CENTRAL
+                @if($isSpecial)
+                    {{ strtoupper($permintaan->gudang_asal ?? '-') }}
                 @else
-                    GA
+                    {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}
                 @endif
             </td>
         </tr>
+        @if($isSpecial)
+        <tr>
+            <td class="label">GUDANG TUJUAN</td>
+            <td style="font-weight: bold;" colspan="3">: {{ strtoupper($permintaan->gudang_tujuan ?? '-') }}</td>
+        </tr>
+        @endif
     </table>
 
     <table class="content-table">

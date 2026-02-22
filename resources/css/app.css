@@ -31,4 +31,9 @@
     .border-brand-primary {
         border-color: var(--primary-dark-green);
     }
+
+    /* Responsive Button Enhancements */
+    .btn-responsive {
+        @apply px-4 py-2 text-xs sm:px-6 sm:py-3 sm:text-sm font-bold transition-all duration-200 active:scale-95;
+    }
 }

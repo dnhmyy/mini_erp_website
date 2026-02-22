@@ -26,27 +26,59 @@
         <p>Internal Goods Request System</p>
     </div> -->
 
+    @php
+        $role = $permintaan->user->role;
+        $kategori = $permintaan->kategori;
+        $title = 'SURAT JALAN (PENGIRIMAN)';
+        
+        if ($role === 'staff_admin') {
+            if ($kategori === 'BB') $title = 'PERMINTAAN BARANG';
+            elseif ($kategori === 'ISIAN') $title = 'PERMINTAAN BAHAN - ISIAN';
+            elseif ($kategori === 'GA') $title = 'PERMINTAAN PERALATAN';
+        } elseif ($role === 'staff_produksi') {
+            if ($kategori === 'BB') $title = 'PERMINTAAN BAHAN BAKU';
+            elseif ($kategori === 'ISIAN') $title = 'PERMINTAAN BAHAN - ISIAN';
+            elseif ($kategori === 'GA') $title = 'PERMINTAAN PERALATAN';
+        }
+
+        $isSpecial = in_array($role, ['staff_dapur', 'staff_pastry', 'mixing']);
+    @endphp
+
     <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin: 0; font-size: 16px;">SURAT JALAN (PENGIRIMAN)</h2>
+        <h2 style="margin: 0; font-size: 16px;">{{ strtoupper($title) }}</h2>
     </div>
 
     <table class="info-table">
+        <tr>
+            <td class="label">TANGGAL PERMINTAAN</td>
+            <td>: {{ strtoupper(\Carbon\Carbon::parse($permintaan->tanggal)->translatedFormat('d F Y')) }}</td>
+            <td class="label">NAMA PEMOHON</td>
+            <td style="font-weight: bold;">: {{ strtoupper($permintaan->user->name ?? '-') }}</td>
+        </tr>
         <tr>
             <td class="label">NO. SURAT JALAN</td>
             <td>: SJ-{{ $permintaan->no_request }}</td>
             <td class="label">PENGIRIM</td>
             <td style="font-weight: bold;">: 
-                @if($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN')
-                    CENTRAL
+                @if($isSpecial)
+                    {{ strtoupper($permintaan->gudang_asal ?? '-') }}
                 @else
-                    GA
+                    {{ ($permintaan->kategori === 'BB' || $permintaan->kategori === 'ISIAN') ? 'CENTRAL' : 'GA' }}
                 @endif
             </td>
         </tr>
+        @if($isSpecial)
+        <tr>
+            <td class="label">GUDANG ASAL</td>
+            <td style="font-weight: bold;">: {{ strtoupper($permintaan->gudang_asal ?? '-') }}</td>
+            <td class="label">GUDANG TUJUAN</td>
+            <td style="font-weight: bold;">: {{ strtoupper($permintaan->gudang_tujuan ?? '-') }}</td>
+        </tr>
+        @endif
         <tr>
             <td class="label">TGL. KIRIM</td>
             <td>: {{ strtoupper(now()->translatedFormat('d F Y')) }}</td>
-            <td class="label">TUJUAN</td>
+            <td class="label">TUJUAN (CABANG)</td>
             <td style="font-weight: bold;">: {{ strtoupper($permintaan->cabang->nama ?? '-') }}</td>
         </tr>
         <tr>

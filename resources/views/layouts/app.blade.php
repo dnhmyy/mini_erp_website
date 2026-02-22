@@ -68,6 +68,7 @@
                                     'staff_produksi'=> 'Staff Produksi',
                                     'staff_dapur'   => 'Staff Dapur',
                                     'staff_pastry'  => 'Staff Pastry',
+                                    'mixing'        => 'Mixing',
                                 ];
                                 $roleDisplay = $roleLabels[Auth::user()->role] ?? str_replace('_', ' ', Auth::user()->role);
                             @endphp

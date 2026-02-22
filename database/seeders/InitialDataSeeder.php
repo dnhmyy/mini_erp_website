@@ -25,6 +25,7 @@ class InitialDataSeeder extends Seeder
             'Grand Indonesia' => 'Jl. Grand Indonesia',
             'Dapur Solvang'   => 'Solvang Dapur Area',
             'Pastry Solvang'  => 'Solvang Pastry Area',
+            'Mixing'          => 'Mixing Area',
         ];
 
         foreach ($cabangs as $nama => $alamat) {
@@ -100,6 +101,12 @@ class InitialDataSeeder extends Seeder
                 'name'  => 'Staff Pastry',
                 'role'  => 'staff_pastry',
                 'cabang'=> 'Pastry Solvang'
+            ],
+            [
+                'email' => 'mixing',
+                'name'  => 'Staff Mixing',
+                'role'  => 'mixing',
+                'cabang'=> 'Mixing'
             ],
         ];
 
