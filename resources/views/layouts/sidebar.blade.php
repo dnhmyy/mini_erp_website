@@ -73,7 +73,7 @@
 
     <!-- Bottom Actions -->
     <div class="mt-auto border-t border-brand-secondary/50 bg-slate-900/10">
-        <form method="POST" action="{{ route('logout') }}" id="logout-form">
+        <form method="POST" action="{{ route('logout', [], false) }}" id="logout-form">
             @csrf
             <button type="submit" class="flex items-center w-full px-6 py-4 text-sm font-semibold text-slate-100 hover:bg-red-500 hover:text-white transition-all duration-300 group">
                 <div class="p-2 rounded-lg bg-red-500/10 group-hover:bg-white/20 mr-3 transition-colors duration-300">
