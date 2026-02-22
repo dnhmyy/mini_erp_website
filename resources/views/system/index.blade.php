@@ -31,7 +31,7 @@
                 <h4 class="text-xl font-black text-slate-900 mb-2">Backup Database</h4>
                 <p class="text-sm text-slate-600 leading-relaxed mb-8 font-medium">Download cadangan data sistem (.sql) secara instan untuk keamanan data Anda.</p>
                 
-                <button @click="confirmBackup = true" class="w-full py-4 bg-white text-blue-600 rounded-2xl font-bold text-sm hover:bg-blue-600 hover:text-white transition-all duration-300 border-2 border-blue-100 flex items-center justify-center group/btn shadow-sm">
+                <button @click="confirmBackup = true" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm hover:bg-blue-700 active:bg-blue-800 transition-all duration-300 flex items-center justify-center group/btn shadow-md hover:shadow-lg">
                     <span>Unduh Sekarang</span>
                     <svg class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 </button>
@@ -67,7 +67,7 @@
                 <h3 class="text-xl font-black text-slate-900 mb-2">Reset Data Request</h3>
                 <p class="text-sm text-slate-600 leading-relaxed mb-8 font-medium">Hapus seluruh riwayat permintaan barang secara permanen dari database.</p>
                 
-                <button @click="open = true" class="w-full py-4 bg-white text-rose-600 rounded-2xl font-bold text-sm hover:bg-rose-600 hover:text-white transition-all duration-300 border-2 border-rose-100 flex items-center justify-center group/btn shadow-sm">
+                <button @click="open = true" class="w-full py-4 bg-rose-600 text-white rounded-2xl font-bold text-sm hover:bg-rose-700 active:bg-rose-800 transition-all duration-300 flex items-center justify-center group/btn shadow-md hover:shadow-lg">
                     <span>Bersihkan Data</span>
                     <svg class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                 </button>
