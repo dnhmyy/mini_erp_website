@@ -9,6 +9,52 @@ use App\Models\ProductCatalog;
 
 class MasterProdukController extends Controller
 {
+    public function bulkCreate(Request $request)
+    {
+        $cabangs = \App\Models\Cabang::all();
+        // Ambil catalog yang belum ada di master produk (opsional, tapi lebih baik)
+        $existingCodes = MasterProduk::pluck('kode_produk')->toArray();
+        $catalog = ProductCatalog::orderBy('nama')->get();
+        
+        return view('master-produk.bulk-create', compact('cabangs', 'catalog', 'existingCodes'));
+    }
+
+    public function bulkStore(Request $request)
+    {
+        $request->validate([
+            'kategori' => 'required|in:BB,ISIAN,GA',
+            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,all',
+            'catalog_ids' => 'required|array',
+            'catalog_ids.*' => 'exists:product_catalogs,id',
+        ]);
+
+        $allCabangIds = \App\Models\Cabang::pluck('id')->toArray();
+        $selectedCatalogs = ProductCatalog::whereIn('id', $request->catalog_ids)->get();
+
+        \DB::beginTransaction();
+        try {
+            foreach ($selectedCatalogs as $item) {
+                $produk = MasterProduk::updateOrCreate(
+                    ['kode_produk' => $item->kode],
+                    [
+                        'nama_produk' => $item->nama,
+                        'satuan' => $item->satuan,
+                        'kategori' => $request->kategori,
+                        'target_role' => $request->target_role,
+                    ]
+                );
+
+                // Hubungkan ke semua cabang
+                $produk->cabangs()->sync($allCabangIds);
+            }
+            \DB::commit();
+            return redirect()->route('master-produk.index')->with('success', count($selectedCatalogs) . ' produk berhasil ditambahkan secara batch.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
     public function index(Request $request)
     {
         $query = MasterProduk::query();

@@ -17,6 +17,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'role:superuser'])->group(function () {
+    Route::get('master-produk/bulk-create', [MasterProdukController::class, 'bulkCreate'])->name('master-produk.bulk-create');
+    Route::post('master-produk/bulk-store', [MasterProdukController::class, 'bulkStore'])->name('master-produk.bulk-store');
     Route::resource('master-produk', MasterProdukController::class);
     Route::resource('product-catalog', \App\Http\Controllers\ProductCatalogController::class);
     Route::resource('cabang', CabangController::class);
