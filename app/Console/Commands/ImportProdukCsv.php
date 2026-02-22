@@ -38,15 +38,19 @@ class ImportProdukCsv extends Command
         $inferredRoles = [];
 
         // Parsing Nama File (Contoh: GA_staff_admin_staff_produksi.csv)
-        $parts = explode('_', strtolower($filename));
+        $filenameLower = strtolower($filename);
         $possibleCategories = ['bb', 'isian', 'ga'];
         $possibleRoles = ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing', 'all'];
 
-        foreach ($parts as $part) {
-            if (in_array($part, $possibleCategories)) {
-                $inferredKategori = strtoupper($part);
-            } elseif (in_array($part, $possibleRoles)) {
-                $inferredRoles[] = $part;
+        foreach ($possibleCategories as $cat) {
+            if (str_contains($filenameLower, $cat)) {
+                $inferredKategori = strtoupper($cat);
+            }
+        }
+
+        foreach ($possibleRoles as $role) {
+            if (str_contains($filenameLower, $role)) {
+                $inferredRoles[] = $role;
             }
         }
 
