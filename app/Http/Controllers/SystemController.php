@@ -75,24 +75,29 @@ class SystemController extends Controller
 
     public function resetRequests(Request $request)
     {
-        if ($request->confirmation !== 'RESET') {
+        if (strtoupper($request->confirmation) !== 'RESET') {
             return redirect()->back()->with('error', 'Konfirmasi tidak sesuai. Harap ketik "RESET".');
         }
 
         try {
             DB::beginTransaction();
             
-            Schema::disableForeignKeyConstraints();
+            // Using explicit SQL for maximum reliability in MySQL/Docker
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            
             DB::table('permintaan_details')->truncate();
             DB::table('permintaans')->truncate();
-            Schema::enableForeignKeyConstraints();
+            
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             
             DB::commit();
 
-            return redirect()->back()->with('success', 'Semua data request telah berhasil direset.');
+            return redirect()->back()->with('success', 'Seluruh data permintaan telah berhasil dihapus.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mereset data: ' . $e->getMessage());
+            // Ensure checks are turned back on even on failure
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            return redirect()->back()->with('error', 'Gagal reset data: ' . $e->getMessage());
         }
     }
 }
