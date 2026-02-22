@@ -104,18 +104,6 @@
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-3 uppercase tracking-widest text-[11px] text-slate-400">Target Role (Dapat pilih lebih dari satu)</label>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            @php
-                                $roles = [
-                                    'staff_admin' => 'Staff Admin',
-                                    'staff_produksi' => 'Staff Produksi',
-                                    'staff_dapur' => 'Staff Dapur',
-                                    'staff_pastry' => 'Staff Pastry',
-                                    'mixing' => 'Mixing',
-                                    'all' => 'Semua Staff'
-                                ];
-                                $targetRoles = old('target_role', $masterProduk->target_role) ?? [];
-                                if (!is_array($targetRoles)) $targetRoles = [$targetRoles];
-                            @php
                             @foreach($roles as $val => $label)
                                 <label class="inline-flex items-center group cursor-pointer bg-white p-3 rounded-xl border border-slate-100 hover:border-brand-primary transition-all">
                                     <input type="checkbox" name="target_role[]" value="{{ $val }}" 

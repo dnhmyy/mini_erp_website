@@ -112,7 +112,14 @@ class MasterProdukController extends Controller
     {
         $catalog = ProductCatalog::orderBy('nama')->get();
         $roles = $this->getRoles();
-        return view('master-produk.edit', compact('masterProduk', 'catalog', 'roles'));
+        
+        // Prepare targetRoles for the view
+        $targetRoles = old('target_role', $masterProduk->target_role) ?? [];
+        if (!is_array($targetRoles)) {
+            $targetRoles = [$targetRoles];
+        }
+
+        return view('master-produk.edit', compact('masterProduk', 'catalog', 'roles', 'targetRoles'));
     }
 
     private function getRoles()
