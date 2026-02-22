@@ -23,7 +23,7 @@ class MasterProdukController extends Controller
     {
         $request->validate([
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,all',
+            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
             'catalog_ids' => 'required|array',
             'catalog_ids.*' => 'exists:product_catalogs,id',
             'cabang_ids' => 'nullable|array',
@@ -104,7 +104,7 @@ class MasterProdukController extends Controller
             'nama_produk' => 'required',
             'satuan' => 'required',
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,all',
+            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
             'cabang_ids' => 'nullable|array',
             'cabang_ids.*' => 'exists:cabangs,id',
         ]);
@@ -133,7 +133,7 @@ class MasterProdukController extends Controller
             'nama_produk' => 'required',
             'satuan' => 'required',
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,all',
+            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
             'cabang_ids' => 'nullable|array',
             'cabang_ids.*' => 'exists:cabangs,id',
         ]);
