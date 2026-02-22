@@ -34,11 +34,12 @@
                         <option value="staff_produksi" {{ old('role') == 'staff_produksi' ? 'selected' : '' }}>Staff Produksi</option>
                         <option value="staff_dapur" {{ old('role') == 'staff_dapur' ? 'selected' : '' }}>Staff Dapur</option>
                         <option value="staff_pastry" {{ old('role') == 'staff_pastry' ? 'selected' : '' }}>Staff Pastry</option>
+                        <option value="mixing" {{ old('role') == 'mixing' ? 'selected' : '' }}>Mixing</option>
                     </select>
                     @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
 
-                <div id="cabang_selection" class="{{ in_array(old('role'), ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry']) ? '' : 'hidden' }}">
+                <div id="cabang_selection" class="{{ in_array(old('role'), ['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing']) ? '' : 'hidden' }}">
                     <label for="cabang_id" class="block text-sm font-medium text-slate-700 mb-1">Pilih Cabang</label>
                     <select name="cabang_id" id="cabang_id" class="block w-full border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary sm:text-sm transition">
                         <option value="">-- Pilih Cabang --</option>
@@ -67,7 +68,7 @@
             const cabangSelection = document.getElementById('cabang_selection');
             const cabangInput = document.getElementById('cabang_id');
 
-            if (['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry'].includes(roleSelect.value)) {
+            if (['staff_admin', 'staff_produksi', 'staff_dapur', 'staff_pastry', 'mixing'].includes(roleSelect.value)) {
                 cabangSelection.classList.remove('hidden');
             } else {
                 cabangSelection.classList.add('hidden');
