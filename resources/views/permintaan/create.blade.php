@@ -3,6 +3,9 @@
         Buat Permintaan - {{ $kategori }}
     </x-slot>
 
+    <!-- Tom Select CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+
     <div class="max-w-4xl bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mx-auto">
         <div class="p-8">
             <div class="mb-6">
@@ -94,11 +97,11 @@
                             <tbody class="divide-y divide-slate-200">
                                 @for($i = 0; $i < 10; $i++)
                                 <tr class="item-row">
-                                    <td class="px-4 py-3">
-                                        <select name="items[{{ $i }}][produk_id]" {{ $i === 0 ? 'required' : '' }} class="block w-full border-transparent bg-transparent focus:ring-0 sm:text-sm">
+                                    <td class="px-4 py-3 min-w-[250px]">
+                                        <select name="items[{{ $i }}][produk_id]" {{ $i === 0 ? 'required' : '' }} class="tom-select block w-full border-slate-200 rounded-lg focus:border-brand-primary sm:text-sm">
                                             <option value="">-- Pilih Produk --</option>
                                             @foreach($produks as $produk)
-                                                <option value="{{ $produk->id }}">{{ $produk->nama_produk }} ({{ $produk->satuan }})</option>
+                                                <option value="{{ $produk->id }}" data-satuan="{{ $produk->satuan }}">{{ $produk->nama_produk }}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -130,7 +133,39 @@
         </div>
     </div>
 
+    <!-- Tom Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
+        // Custom Tom Select Configuration
+        const tomSelectConfig = {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            searchField: ["text"],
+            render: {
+                option: function(data, escape) {
+                    return '<div><span class="font-medium">' + escape(data.text) + '</span>' +
+                           (data.satuan ? '<span class="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">' + escape(data.satuan) + '</span>' : '') +
+                           '</div>';
+                },
+                item: function(data, escape) {
+                    return '<div><span class="font-medium">' + escape(data.text) + '</span>' +
+                           (data.satuan ? '<span class="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">' + escape(data.satuan) + '</span>' : '') +
+                           '</div>';
+                }
+            },
+            placeholder: "Cari produk..."
+        };
+
+        // Initialize Tom Select on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tom-select').forEach((el) => {
+                new TomSelect(el, tomSelectConfig);
+            });
+        });
+
         let rowIndex = 10;
         function addRow() {
             const table = document.getElementById('items-table').getElementsByTagName('tbody')[0];
@@ -140,11 +175,11 @@
             newRow.classList.add('divide-slate-200');
             
             newRow.innerHTML = `
-                <td class="px-4 py-3">
-                    <select name="items[${rowIndex}][produk_id]" required class="block w-full border-transparent bg-transparent focus:ring-0 sm:text-sm">
+                <td class="px-4 py-3 min-w-[250px]">
+                    <select name="items[${rowIndex}][produk_id]" required class="tom-select block w-full border-slate-200 rounded-lg focus:border-brand-primary sm:text-sm">
                         <option value="">-- Pilih Produk --</option>
                         @foreach($produks as $produk)
-                            <option value="{{ $produk->id }}">{{ $produk->nama_produk }} ({{ $produk->satuan }})</option>
+                            <option value="{{ $produk->id }}" data-satuan="{{ $produk->satuan }}">{{ $produk->nama_produk }}</option>
                         @endforeach
                     </select>
                 </td>
@@ -157,6 +192,13 @@
                     </button>
                 </td>
             `;
+            
+            // Initialize Tom Select on the new element
+            const newSelect = newRow.querySelector('.tom-select');
+            if (newSelect) {
+                new TomSelect(newSelect, tomSelectConfig);
+            }
+            
             rowIndex++;
         }
 
