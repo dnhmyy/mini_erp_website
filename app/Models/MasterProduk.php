@@ -8,6 +8,10 @@ class MasterProduk extends Model
 {
     protected $fillable = ['kode_produk', 'nama_produk', 'satuan', 'kategori', 'target_role'];
 
+    protected $casts = [
+        'target_role' => 'array',
+    ];
+
     public function permintaanDetails()
     {
         return $this->hasMany(PermintaanDetail::class, 'produk_id');

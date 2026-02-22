@@ -11,29 +11,23 @@ class MasterProdukController extends Controller
 {
     public function bulkCreate(Request $request)
     {
-        $cabangs = \App\Models\Cabang::all();
         // Ambil catalog yang belum ada di master produk (opsional, tapi lebih baik)
         $existingCodes = MasterProduk::pluck('kode_produk')->toArray();
         $catalog = ProductCatalog::orderBy('nama')->get();
         
-        return view('master-produk.bulk-create', compact('cabangs', 'catalog', 'existingCodes'));
+        return view('master-produk.bulk-create', compact('catalog', 'existingCodes'));
     }
 
     public function bulkStore(Request $request)
     {
         $request->validate([
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
+            'target_role' => 'nullable|array',
+            'target_role.*' => 'in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
             'catalog_ids' => 'required|array',
             'catalog_ids.*' => 'exists:product_catalogs,id',
-            'cabang_ids' => 'nullable|array',
-            'cabang_ids.*' => 'exists:cabangs,id',
         ]);
 
-        $cabangIds = $request->filled('cabang_ids') 
-            ? $request->cabang_ids 
-            : \App\Models\Cabang::pluck('id')->toArray();
-            
         $selectedCatalogs = ProductCatalog::whereIn('id', $request->catalog_ids)->get();
 
         \DB::beginTransaction();
@@ -48,9 +42,6 @@ class MasterProdukController extends Controller
                         'target_role' => $request->target_role,
                     ]
                 );
-
-                // Hubungkan ke cabang terpilih (atau semua jika tidak ada yang dipilih)
-                $produk->cabangs()->sync($cabangIds);
             }
             \DB::commit();
             return redirect()->route('master-produk.index')->with('success', count($selectedCatalogs) . ' produk berhasil ditambahkan secara batch.');
@@ -78,7 +69,7 @@ class MasterProdukController extends Controller
         }
 
         if ($request->filled('target_role')) {
-            $query->where('target_role', $request->target_role);
+            $query->whereJsonContains('target_role', $request->target_role);
         }
 
         $produks = $query->latest()->paginate(30)->onEachSide(1)->appends($request->query());
@@ -92,9 +83,8 @@ class MasterProdukController extends Controller
 
     public function create()
     {
-        $cabangs = \App\Models\Cabang::all();
         $catalog = ProductCatalog::orderBy('nama')->get();
-        return view('master-produk.create', compact('cabangs', 'catalog'));
+        return view('master-produk.create', compact('catalog'));
     }
 
     public function store(Request $request)
@@ -104,26 +94,19 @@ class MasterProdukController extends Controller
             'nama_produk' => 'required',
             'satuan' => 'required',
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
-            'cabang_ids' => 'nullable|array',
-            'cabang_ids.*' => 'exists:cabangs,id',
+            'target_role' => 'nullable|array',
+            'target_role.*' => 'in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
         ]);
 
         $produk = MasterProduk::create($request->all());
-
-        if ($request->has('cabang_ids')) {
-            $produk->cabangs()->sync($request->cabang_ids);
-        }
 
         return redirect()->route('master-produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function edit(MasterProduk $masterProduk)
     {
-        $cabangs = \App\Models\Cabang::all();
         $catalog = ProductCatalog::orderBy('nama')->get();
-        $masterProduk->load('cabangs');
-        return view('master-produk.edit', compact('masterProduk', 'cabangs', 'catalog'));
+        return view('master-produk.edit', compact('masterProduk', 'catalog'));
     }
 
     public function update(Request $request, MasterProduk $masterProduk)
@@ -133,18 +116,11 @@ class MasterProdukController extends Controller
             'nama_produk' => 'required',
             'satuan' => 'required',
             'kategori' => 'required|in:BB,ISIAN,GA',
-            'target_role' => 'nullable|in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
-            'cabang_ids' => 'nullable|array',
-            'cabang_ids.*' => 'exists:cabangs,id',
+            'target_role' => 'nullable|array',
+            'target_role.*' => 'in:staff_admin,staff_produksi,staff_dapur,staff_pastry,mixing,all',
         ]);
 
         $masterProduk->update($request->all());
-
-        if ($request->has('cabang_ids')) {
-            $masterProduk->cabangs()->sync($request->cabang_ids);
-        } else {
-            $masterProduk->cabangs()->detach();
-        }
 
         return redirect()->route('master-produk.index')->with('success', 'Produk berhasil diperbarui.');
     }

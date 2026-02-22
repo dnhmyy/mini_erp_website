@@ -77,7 +77,7 @@
                             <option value="staff_dapur" {{ request('target_role') == 'staff_dapur' ? 'selected' : '' }}>Staff Dapur</option>
                             <option value="staff_pastry" {{ request('target_role') == 'staff_pastry' ? 'selected' : '' }}>Staff Pastry</option>
                             <option value="mixing" {{ request('target_role') == 'mixing' ? 'selected' : '' }}>Mixing</option>
-                            <option value="all" {{ request('target_role') == 'all' ? 'selected' : '' }}>All (Admin & Produksi)</option>
+                            <option value="all" {{ request('target_role') == 'all' ? 'selected' : '' }}>Semua Staff</option>
                         </select>
                     </div>
 

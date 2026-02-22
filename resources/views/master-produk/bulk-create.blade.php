@@ -48,9 +48,9 @@
                     Pengaturan Batch
                 </h4>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-6">
                     <div>
-                        <label for="kategori" class="block text-sm font-bold text-slate-700 mb-2">Kategori</label>
+                        <label for="kategori" class="block text-sm font-bold text-slate-700 mb-2">Kategori Batch</label>
                         <select name="kategori" id="kategori" x-model="kategori" required 
                                 class="block w-full border border-slate-200 rounded-xl py-3 px-4 focus:ring-brand-primary focus:border-brand-primary transition">
                             <option value="BB">Bahan Baku (BB)</option>
@@ -60,32 +60,27 @@
                     </div>
 
                     <div>
-                        <label for="target_role" class="block text-sm font-bold text-slate-700 mb-2">Target Role</label>
-                        <select name="target_role" id="target_role" x-model="target_role"
-                                class="block w-full border border-slate-200 rounded-xl py-3 px-4 focus:ring-brand-primary focus:border-brand-primary transition">
-                            <option value="">-- Semua Staff Cabang --</option>
-                            <option value="staff_admin">Staff Admin</option>
-                            <option value="staff_produksi">Staff Produksi</option>
-                            <option value="staff_dapur">Staff Dapur</option>
-                            <option value="staff_pastry">Staff Pastry</option>
-                            <option value="mixing">Mixing</option>
-                            <option value="all">Semua (Admin & Produksi)</option>
-                        </select>
+                        <label class="block text-sm font-bold text-slate-700 mb-4 uppercase tracking-widest text-[11px] text-slate-400">Target Role (Dapat pilih lebih dari satu)</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                            @php
+                                $roles = [
+                                    'staff_admin' => 'Staff Admin',
+                                    'staff_produksi' => 'Staff Produksi',
+                                    'staff_dapur' => 'Staff Dapur',
+                                    'staff_pastry' => 'Staff Pastry',
+                                    'mixing' => 'Mixing',
+                                    'all' => 'Semua Staff'
+                                ];
+                            @endphp
+                            @foreach($roles as $val => $label)
+                                <label class="inline-flex items-center group cursor-pointer bg-white p-3 rounded-xl border border-slate-100 hover:border-brand-primary transition-all">
+                                    <input type="checkbox" name="target_role[]" value="{{ $val }}" 
+                                           class="w-5 h-5 rounded border-slate-300 text-brand-primary focus:ring-brand-primary transition">
+                                    <span class="ml-3 text-sm font-semibold text-slate-600 group-hover:text-brand-primary transition-colors">{{ $label }}</span>
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-
-                <!-- NEW: Branch Selection -->
-                <div class="pt-6 border-t border-slate-50">
-                    <label class="block text-sm font-bold text-slate-700 mb-4 uppercase tracking-widest text-[11px] text-slate-400">Pilih Ketersediaan Cabang</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                        @foreach($cabangs as $cabang)
-                            <label class="inline-flex items-center group cursor-pointer">
-                                <input type="checkbox" name="cabang_ids[]" value="{{ $cabang->id }}" class="w-5 h-5 rounded border-slate-300 text-brand-primary focus:ring-brand-primary transition">
-                                <span class="ml-3 text-sm font-semibold text-slate-600 group-hover:text-brand-primary transition-colors">{{ $cabang->nama }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                    <p class="mt-3 text-[10px] text-slate-400 italic">* Jika tidak memilih cabang tertentu, produk akan tersedia di semua cabang.</p>
                 </div>
             </div>
 

@@ -64,23 +64,30 @@ class PermintaanController extends Controller
             abort(403, 'Akses ke kategori Isian dibatasi untuk role Anda.');
         }
 
+        $cabangName = $user->cabang ? $user->cabang->nama : '';
         $query = MasterProduk::where('kategori', $kategori);
 
-        // Filter by target_role for all categories
+        // 1. Role Filter: Product must have user's role or 'all'
         $query->where(function($q) use ($user) {
-            $q->where('target_role', $user->role)          // exact match for this role
-              ->orWhere('target_role', 'all')               // 'all' means open to all branch staff
-              ->orWhereNull('target_role');                 // null/empty means no restriction
+            $q->whereJsonContains('target_role', $user->role)
+              ->orWhereJsonContains('target_role', 'all')
+              ->orWhereNull('target_role');
         });
 
-        // Filter by assigned branch if not superuser
+        // 2. Branch Routing Logic
         if (!$user->isSuperUser()) {
-            $cabang_id = $user->cabang_id;
-            $query->where(function($q) use ($cabang_id) {
-                $q->whereHas('cabangs', function($sq) use ($cabang_id) {
-                    $sq->where('cabangs.id', $cabang_id);
-                })->orWhereDoesntHave('cabangs');
-            });
+            if (in_array($user->role, ['staff_admin', 'staff_produksi'])) {
+                // Staff Admin & Produksi: available for all branches EXCEPT Dapur Solvang, Pastry Solvang, Mixing
+                if (in_array($cabangName, ['Dapur Solvang', 'Pastry Solvang', 'Mixing'])) {
+                    $query->whereRaw('1 = 0');
+                }
+            } elseif ($user->role === 'staff_dapur') {
+                if ($cabangName !== 'Dapur Solvang') $query->whereRaw('1 = 0');
+            } elseif ($user->role === 'staff_pastry') {
+                if ($cabangName !== 'Pastry Solvang') $query->whereRaw('1 = 0');
+            } elseif ($user->role === 'mixing') {
+                if ($cabangName !== 'Mixing') $query->whereRaw('1 = 0');
+            }
         }
 
         $produks = $query->get();

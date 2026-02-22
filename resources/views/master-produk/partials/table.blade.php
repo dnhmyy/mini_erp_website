@@ -13,6 +13,7 @@
                     <th class="px-6 py-3 font-semibold">Kode Produk</th>
                     <th class="px-6 py-3 font-semibold">Nama Produk</th>
                     <th class="px-6 py-3 font-semibold">Kategori</th>
+                    <th class="px-6 py-3 font-semibold">Target Role</th>
                     <th class="px-6 py-3 font-semibold">Satuan</th>
                     <th class="px-6 py-3 font-semibold text-right">Aksi</th>
                 </tr>
@@ -31,6 +32,24 @@
                         <td class="px-6 py-4">
                             <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold bg-slate-100 text-slate-700">
                                 {{ $produk->kategori }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @php
+                                $roleLabels = [
+                                    'staff_admin' => 'Admin',
+                                    'staff_produksi' => 'Produksi',
+                                    'staff_dapur' => 'Dapur',
+                                    'staff_pastry' => 'Pastry',
+                                    'mixing' => 'Mixing',
+                                    'all' => 'Semua'
+                                ];
+                                $target = $produk->target_role;
+                                if (is_string($target)) $target = json_decode($target, true) ?? [$target];
+                                $display = collect($target ?? [])->map(fn($r) => $roleLabels[$r] ?? $r)->join(', ');
+                            @endphp
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">
+                                {{ $display ?: '-' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-slate-600">{{ $produk->satuan }}</td>
