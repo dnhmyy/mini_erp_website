@@ -99,7 +99,7 @@
                                     <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
                                         <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-3.586a1 1 0 00-.707.293l-1.414 1.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-1.414-1.414A1 1 0 009.586 13H6"></path></svg>
                                     </div>
-                                    <p class="text-[11px] text-slate-400 font-medium">Belum ada item dipilih.<br>Cari dan pilih di kolom kanan.</p>
+                                    <p class="text-[11px] text-slate-400 font-medium">Belum ada item dipilih.</p>
                                 </div>
                             </template>
                         </div>
