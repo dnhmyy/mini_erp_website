@@ -68,11 +68,11 @@
                     <!-- Confirmation Modal -->
                     <template x-teleport="body">
                         <div x-show="open" 
-                             class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" 
+                             class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-4" 
                              x-cloak>
                             
                             <!-- Overlay -->
-                            <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" 
+                            <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" 
                                  x-show="open"
                                  x-transition:enter="ease-out duration-300"
                                  x-transition:enter-start="opacity-0"
@@ -83,7 +83,7 @@
                                  @click="open = false"></div>
 
                             <!-- Modal Content Box -->
-                            <div class="relative bg-white rounded-3xl shadow-2xl transform transition-all w-full max-w-lg overflow-hidden border border-slate-200"
+                            <div class="relative bg-white rounded-[2rem] shadow-2xl transform transition-all w-full max-w-md overflow-hidden border border-slate-200"
                                  x-show="open"
                                  x-transition:enter="ease-out duration-300"
                                  x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95"
@@ -92,47 +92,44 @@
                                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                                  x-transition:leave-end="opacity-0 translate-y-8 sm:scale-95">
                                 
-                                <div class="px-8 pt-12 pb-10">
+                                <div class="px-8 pt-10 pb-8">
                                     <div class="text-center">
-                                        <div class="inline-flex items-center justify-center h-20 w-20 rounded-full bg-rose-50 text-rose-600 mb-6 group-hover:scale-110 transition-transform duration-500">
-                                            <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-rose-50 text-rose-600 mb-6">
+                                            <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                         </div>
                                         
-                                        <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-4">Konfirmasi Reset</h3>
+                                        <h3 class="text-2xl font-black text-slate-800 tracking-tight leading-tight mb-3">Konfirmasi Reset</h3>
                                         
-                                        <div class="bg-rose-50/50 rounded-2xl p-6 mb-8 border border-rose-100/50">
-                                            <p class="text-sm text-rose-800 font-medium leading-relaxed">
-                                                Tindakan ini akan menghapus <span class="font-bold underline decoration-rose-300 decoration-2 underline-offset-4">SELURUH RIWAYAT PERMINTAAN</span> barang secara permanen.
-                                            </p>
-                                            <p class="mt-3 text-xs text-rose-600 font-bold uppercase tracking-wider">
-                                                Data Master (Produk & User) aman & tidak tersentuh.
+                                        <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100">
+                                            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2">Peringatan</p>
+                                            <p class="text-sm text-rose-700 font-medium leading-relaxed">
+                                                Aksi ini akan menghapus permanen seluruh <strong>Riwayat Permintaan</strong>.
                                             </p>
                                         </div>
                                         
                                         <div class="space-y-3">
-                                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">Ketik <span class="text-rose-600">RESET</span> untuk melanjutkan</label>
+                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Ketik <span class="text-rose-600">RESET</span> di bawah</label>
                                             <input type="text" 
                                                    x-model="confirmation" 
                                                    @keydown.enter="if(confirmation === 'RESET') $refs.submitBtn.click()"
                                                    placeholder="..." 
-                                                   class="block w-full rounded-2xl border-2 border-slate-100 focus:border-rose-500 focus:ring-0 text-lg sm:text-xl bg-slate-50 transition-all font-mono font-black uppercase text-center p-5 placeholder:text-slate-300">
+                                                   class="block w-full rounded-2xl border-2 border-slate-100 focus:border-rose-500 focus:ring-0 text-xl bg-slate-50 transition-all font-mono font-black uppercase text-center p-4">
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="bg-slate-50/80 px-8 py-6 flex flex-col sm:flex-row gap-3 border-t border-slate-100">
+                                <div class="bg-slate-50 p-4 flex flex-col sm:flex-row gap-2">
                                     <form action="{{ route('system.reset-requests') }}" method="POST" class="flex-1 order-2 sm:order-1">
                                         @csrf
                                         <input type="hidden" name="confirmation" x-bind:value="confirmation">
                                         <button type="submit" 
                                                 x-ref="submitBtn"
                                                 :disabled="confirmation !== 'RESET'"
-                                                class="w-full inline-flex justify-center items-center rounded-2xl px-8 py-4 bg-rose-600 text-lg font-bold text-white hover:bg-rose-700 shadow-xl shadow-rose-600/20 transition-all disabled:opacity-20 disabled:cursor-not-allowed uppercase tracking-widest active:scale-95 group">
-                                            <span>Lanjutkan</span>
-                                            <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                                class="w-full inline-flex justify-center items-center rounded-xl px-6 py-3.5 bg-rose-600 text-sm font-bold text-white hover:bg-rose-700 shadow-lg shadow-rose-600/20 transition-all disabled:opacity-20 disabled:cursor-not-allowed uppercase tracking-widest active:scale-95">
+                                            Lanjutkan
                                         </button>
                                     </form>
-                                    <button @click="open = false; confirmation = ''" type="button" class="flex-1 order-1 sm:order-2 inline-flex justify-center items-center rounded-2xl px-8 py-4 bg-white border-2 border-slate-100 text-lg font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-200 transition-all uppercase tracking-widest active:scale-95">
+                                    <button @click="open = false; confirmation = ''" type="button" class="flex-1 order-1 sm:order-2 inline-flex justify-center items-center rounded-xl px-6 py-3.5 bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all uppercase tracking-widest active:scale-95">
                                         Batal
                                     </button>
                                 </div>
