@@ -20,6 +20,7 @@
             </div>
         @endif
 
+        @if (auth()->user()->isSuperUser() || auth()->user()->isStaffGudang())
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 mb-6">
             <form action="{{ route('permintaan.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 @if($kategori)
@@ -43,6 +44,7 @@
                 @endif
             </form>
         </div>
+        @endif
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" id="main-table-wrapper">
             @include('permintaan.partials.table')
