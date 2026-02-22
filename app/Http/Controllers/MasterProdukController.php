@@ -13,9 +13,18 @@ class MasterProdukController extends Controller
     {
         $query = MasterProduk::query();
         
+        // Filter Pencarian Teks (Kode atau Nama)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('nama_produk', $search);
+            $query->where(function($q) use ($search) {
+                $q->where('kode_produk', 'like', "%{$search}%")
+                  ->orWhere('nama_produk', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filter Dropdown Nama Produk (Opsi Pilihan)
+        if ($request->filled('nama_produk')) {
+            $query->where('nama_produk', $request->nama_produk);
         }
         
         if ($request->filled('kategori')) {
