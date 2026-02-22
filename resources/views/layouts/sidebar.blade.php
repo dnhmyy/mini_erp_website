@@ -71,13 +71,12 @@
         </nav>
     </div>
 
-    <!-- Bottom Actions -->
     <div class="mt-auto border-t border-brand-secondary/50 bg-slate-900/10">
         <form method="POST" action="{{ route('logout', [], false) }}" id="logout-form">
             @csrf
-            <button type="submit" class="flex items-center w-full px-6 py-4 text-sm font-semibold text-slate-100 hover:bg-red-500 hover:text-white transition-all duration-300 group">
-                <div class="p-2 rounded-lg bg-red-500/10 group-hover:bg-white/20 mr-3 transition-colors duration-300">
-                    <svg class="w-5 h-5 text-red-400 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <button type="submit" class="flex items-center w-full px-6 py-4 text-sm font-semibold text-slate-100 hover:text-red-400 transition-colors duration-300 group">
+                <div class="p-2 rounded-lg bg-slate-800/50 group-hover:bg-red-500/20 mr-3 transition-colors duration-300">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </div>
                 Logout
             </button>

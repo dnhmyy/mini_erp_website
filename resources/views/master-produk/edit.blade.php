@@ -6,73 +6,36 @@
     <div class="max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mx-auto">
         <div class="p-8">
             <form action="{{ route('master-produk.update', $masterProduk) }}" method="POST" class="space-y-6" x-data="{ 
-                open: false, 
-                search: '{{ old('nama_produk', $masterProduk->nama_produk) }}', 
                 catalog: {{ $catalog->map(fn($item) => ['id' => $item->id, 'kode' => $item->kode, 'nama' => $item->nama, 'satuan' => $item->satuan])->toJson() }},
-                selectedNama: '{{ old('nama_produk', $masterProduk->nama_produk) }}',
                 selectedKode: '{{ old('kode_produk', $masterProduk->kode_produk) }}',
                 selectedSatuan: '{{ old('satuan', $masterProduk->satuan) }}',
-                get filteredCatalog() {
-                    if (this.search === '') return [];
-                    return this.catalog.filter(item => 
-                        item.nama.toLowerCase().includes(this.search.toLowerCase()) || 
-                        item.kode.toLowerCase().includes(this.search.toLowerCase())
-                    ).slice(0, 10);
-                },
-                selectItem(item) {
-                    this.selectedNama = item.nama;
-                    this.search = item.nama;
-                    this.selectedKode = item.kode;
-                    this.selectedSatuan = item.satuan;
-                    this.open = false;
+                handleSelectChange(event) {
+                    const selectedName = event.target.value;
+                    const item = this.catalog.find(c => c.nama === selectedName);
+                    if (item) {
+                        this.selectedKode = item.kode;
+                        this.selectedSatuan = item.satuan;
+                    } else {
+                        this.selectedKode = '';
+                    }
                 }
             }">
                 @csrf
                 @method('PUT')
                 
-                <!-- Smart Product Selection (Combobox) -->
                 <div class="relative">
-                    <label for="search_input" class="block text-sm font-bold text-slate-700 mb-1">Nama Produk (Ketik untuk mencari dari Katalog)</label>
-                    <div class="relative">
-                        <input type="text" 
-                               id="search_input"
-                               x-model="search" 
-                               @input="open = true; selectedNama = $event.target.value"
-                               @click="open = true"
-                               @click.away="open = false"
-                               placeholder="Cari nama barang..." 
-                               autocomplete="off"
-                               class="block w-full border border-slate-200 rounded-xl py-3 px-4 focus:ring-brand-primary focus:border-brand-primary transition pr-10 {{ $errors->has('nama_produk') ? 'border-red-500' : '' }}">
-                        
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
-                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                    </div>
+                    <label for="nama_produk" class="block text-sm font-bold text-slate-700 mb-1">Nama Produk</label>
+                    <select name="nama_produk" id="nama_produk" @change="handleSelectChange" required
+                            class="block w-full border border-slate-200 rounded-xl py-2.5 px-4 focus:ring-brand-primary focus:border-brand-primary transition bg-white {{ $errors->has('nama_produk') ? 'border-red-500' : '' }}">
+                        <option value="">-- Pilih Nama Produk --</option>
+                        @foreach($catalog as $item)
+                            <option value="{{ $item->nama }}" {{ old('nama_produk', $masterProduk->nama_produk) == $item->nama ? 'selected' : '' }}>
+                                {{ $item->nama }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('nama_produk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-
-                    <!-- Dropdown Results -->
-                    <div x-show="open && filteredCatalog.length > 0" 
-                         x-transition:enter="transition ease-out duration-100"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         class="absolute z-50 mt-2 w-full bg-white shadow-2xl rounded-xl py-2 border border-slate-100 overflow-hidden ring-1 ring-black ring-opacity-5">
-                        
-                        <ul class="divide-y divide-slate-50">
-                            <template x-for="item in filteredCatalog" :key="item.id">
-                                <li @click="selectItem(item)" 
-                                    class="cursor-pointer select-none relative py-3 px-4 hover:bg-brand-primary transition-colors group">
-                                    <div class="flex flex-col">
-                                        <span class="font-bold text-slate-800 group-hover:text-white" x-text="item.nama"></span>
-                                        <span class="text-xs text-slate-500 group-hover:text-amber-100 font-medium" x-text="'Kode: ' + item.kode + ' | Satuan: ' + item.satuan"></span>
-                                    </div>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
                 </div>
-
-                <!-- Hidden inputs for form submission -->
-                <input type="hidden" name="nama_produk" :value="selectedNama">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>

@@ -22,11 +22,6 @@ class MasterProdukController extends Controller
             });
         }
         
-        // Filter Dropdown Nama Produk (Opsi Pilihan)
-        if ($request->filled('nama_produk')) {
-            $query->where('nama_produk', $request->nama_produk);
-        }
-        
         if ($request->filled('kategori')) {
             $query->where('kategori', $request->kategori);
         }
@@ -35,14 +30,13 @@ class MasterProdukController extends Controller
             $query->where('target_role', $request->target_role);
         }
 
-        $productNames = MasterProduk::distinct()->pluck('nama_produk')->sort();
         $produks = $query->latest()->paginate(30)->onEachSide(1)->appends($request->query());
 
         if ($request->ajax()) {
             return view('master-produk.partials.table', compact('produks'))->render();
         }
 
-        return view('master-produk.index', compact('produks', 'productNames'));
+        return view('master-produk.index', compact('produks'));
     }
 
     public function create()

@@ -28,18 +28,6 @@
                            class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm">
                 </div>
 
-                <div class="w-full lg:w-48">
-                    <label for="nama_produk" class="sr-only">Pilih Produk</label>
-                    <select name="nama_produk" id="nama_produk" 
-                            onchange="this.form.dispatchEvent(new Event('submit'))"
-                            class="block w-full rounded-lg border-slate-200 focus:border-brand-primary focus:ring-brand-primary sm:text-sm bg-white">
-                        <option value="">-- Semua Produk --</option>
-                        @foreach($productNames as $name)
-                            <option value="{{ $name }}" {{ request('nama_produk') == $name ? 'selected' : '' }}>{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
                 <div class="w-full lg:w-40">
                     <label for="kategori" class="sr-only">Kategori</label>
                     <select name="kategori" id="kategori" 
