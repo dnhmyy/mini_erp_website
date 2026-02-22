@@ -38,9 +38,9 @@ class SystemController extends Controller
         $path = $storagePath . '/' . $filename;
 
         // 3. Execute mysqldump (redirect stderr to file to capture errors)
-        // Added --ssl-mode=DISABLED to avoid self-signed certificate issues in Docker
+        // Added --ssl=0 to avoid self-signed certificate issues in Docker
         $command = sprintf(
-            'mysqldump --user=%s --password=%s --host=%s --ssl-mode=DISABLED %s > %s 2>&1',
+            'mysqldump --user=%s --password=%s --host=%s --ssl=0 %s > %s 2>&1',
             escapeshellarg($userName),
             escapeshellarg($password),
             escapeshellarg($host),
