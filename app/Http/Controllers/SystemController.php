@@ -17,6 +17,12 @@ class SystemController extends Controller
 
     public function backup()
     {
+        // 1. Check if mysqldump is available
+        $mysqlPath = shell_exec('command -v mysqldump');
+        if (!$mysqlPath) {
+            return redirect()->back()->with('error', 'Gagal: Tool "mysqldump" tidak ditemukan di container. Harap jalankan "docker-compose up -d --build" untuk menginstallnya.');
+        }
+
         $databaseName = config('database.connections.mysql.database');
         $userName = config('database.connections.mysql.username');
         $password = config('database.connections.mysql.password');
@@ -25,8 +31,12 @@ class SystemController extends Controller
         $filename = "backup-" . now()->format('Y-m-d-H-i-s') . ".sql";
         $path = storage_path('app/' . $filename);
 
-        // Explicitly set password in environment to avoid displaying it in process list or logs
-        // Using --password directly with escapeshellarg as fallback if env not preferred
+        // Ensure directory exists
+        if (!file_exists(storage_path('app'))) {
+            mkdir(storage_path('app'), 0755, true);
+        }
+
+        // 2. Execute mysqldump
         $command = sprintf(
             'mysqldump --user=%s --password=%s --host=%s %s > %s 2>&1',
             escapeshellarg($userName),
@@ -40,7 +50,7 @@ class SystemController extends Controller
 
         if ($returnVar !== 0 || !file_exists($path)) {
             $errorMessage = implode(' ', $output);
-            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . ($errorMessage ?: 'File tidak dapat dibuat.'));
+            return redirect()->back()->with('error', 'Gagal melakukan backup: ' . ($errorMessage ?: 'Izin ditolak atau sistem terhambat.'));
         }
 
         // Check if file is empty
