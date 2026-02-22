@@ -13,7 +13,7 @@ class ImportProdukCsv extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-produk-csv {file : Path ke file CSV} {kategori? : BB, ISIAN, atau GA (Opsional jika ada di nama file)} {roles* : Target roles (Opsional jika ada di nama file)}';
+    protected $signature = 'app:import-produk-csv {file : Path ke file CSV} {kategori? : BB, ISIAN, atau GA (Opsional jika ada di nama file)} {roles?* : Target roles (Opsional jika ada di nama file)}';
 
     /**
      * The console command description.
@@ -69,20 +69,34 @@ class ImportProdukCsv extends Command
         }
 
         $handle = fopen($filePath, "r");
-        $header = fgetcsv($handle, 1000, ","); // Ambil header
-
-        // Pastikan kolom Minimal: nama.
-        // Jika Kategori TIDAK ada di nama file, maka WAJIB ada kolom 'kategori' di CSV.
-        $requiredCols = ['nama'];
-        if (!$finalKategori) {
-            $requiredCols[] = 'kategori';
+        $firstRow = fgetcsv($handle, 1000, ","); 
+        
+        // Cek apakah ini mode "Vertical List" (Spreadsheet style)
+        // Ciri: Header Isian, BB, atau GA ada di baris pertama
+        $isVerticalMode = false;
+        $columnMap = []; // index -> kategori
+        foreach ($firstRow as $idx => $val) {
+            $cleanVal = strtoupper(trim($val));
+            if (in_array($cleanVal, ['ISIAN', 'BB', 'GA'])) {
+                $isVerticalMode = true;
+                $columnMap[$idx] = $cleanVal;
+            }
         }
 
-        foreach ($requiredCols as $col) {
-            if (!in_array($col, $header)) {
-                $this->error("CSV salah! Header harus memiliki kolom: " . implode(', ', $requiredCols));
-                $this->info("Tips: Jika kategori tidak tertulis di nama file, buat kolom 'kategori' di dalam CSV.");
-                return 1;
+        if ($isVerticalMode) {
+            $this->info("Mode List Vertikal Terdeteksi...");
+            $handle = fopen($filePath, "r");
+            fgetcsv($handle); // Skip header baris 1
+        } else {
+            // Mode CSV Standar (maju ke baris data jika ada header)
+            $header = $firstRow;
+            $requiredCols = ['nama'];
+            if (!$finalKategori) { $requiredCols[] = 'kategori'; }
+            foreach ($requiredCols as $col) {
+                if (!in_array($col, $header)) {
+                    $this->error("CSV salah! Header harus memiliki kolom: " . implode(', ', $requiredCols));
+                    return 1;
+                }
             }
         }
 
@@ -91,62 +105,80 @@ class ImportProdukCsv extends Command
         DB::beginTransaction();
         try {
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                // Skip if empty row
-                if (empty($data[0])) continue;
+                $itemsToProcess = [];
 
-                $row = array_combine($header, $data);
-                
-                // Cari data di KATALOG berdasarkan NAMA
-                $catalogItem = \App\Models\ProductCatalog::where('nama', trim($row['nama']))->first();
-
-                if (!$catalogItem) {
-                    $this->warn("Baris " . ($count + 1) . ": Produk '{$row['nama']}' tidak ditemukan di Katalog. Dilewati.");
-                    $skipped++;
-                    continue;
-                }
-
-                // Prioritas Kategori: Kolom CSV > Argumen/Nama File
-                $rowKategori = isset($row['kategori']) ? strtoupper($row['kategori']) : $finalKategori;
-
-                if (!$rowKategori) {
-                    throw new \Exception("Kategori tidak ditemukan untuk baris: " . ($count + 1) . ". Pastikan ada di Nama File atau Kolom CSV.");
-                }
-
-                $produk = MasterProduk::where('kode_produk', $catalogItem->kode)->first();
-
-                if ($produk) {
-                    // Update existing: MERGE roles
-                    $existingRoles = is_array($produk->target_role) ? $produk->target_role : [];
-                    $mergedRoles = array_unique(array_merge($existingRoles, $finalRoles));
-                    
-                    $produk->update([
-                        'nama_produk' => $catalogItem->nama,
-                        'satuan'      => $catalogItem->satuan,
-                        'kategori'    => $rowKategori,
-                        'target_role' => $mergedRoles,
-                    ]);
+                if ($isVerticalMode) {
+                    // Ambil setiap kolom yang terpetai
+                    foreach ($columnMap as $idx => $kat) {
+                        if (!empty(trim($data[$idx] ?? ''))) {
+                            $itemsToProcess[] = [
+                                'nama' => trim($data[$idx]),
+                                'kategori' => $kat
+                            ];
+                        }
+                    }
                 } else {
-                    // Create new
-                    MasterProduk::create([
-                        'kode_produk' => $catalogItem->kode,
-                        'nama_produk' => $catalogItem->nama,
-                        'satuan'      => $catalogItem->satuan,
-                        'kategori'    => $rowKategori,
-                        'target_role' => $finalRoles,
-                    ]);
+                    $row = array_combine($header, $data);
+                    $itemsToProcess[] = [
+                        'nama' => trim($row['nama']),
+                        'kategori' => isset($row['kategori']) ? strtoupper($row['kategori']) : $finalKategori
+                    ];
                 }
-                $count++;
+
+                foreach ($itemsToProcess as $item) {
+                    $rawName = $item['nama'];
+                    $kat = $item['kategori'];
+
+                    // CLEANING NAMA: Lepas prefix kode (misal "AT - ", "PG - ")
+                    // Biasanya polanya adalah [TEXT] - [NAMA]
+                    $cleanName = $rawName;
+                    if (preg_match('/^[A-Z]{2,3}\s?-\s?(.*)$/', $rawName, $matches)) {
+                        $cleanName = trim($matches[1]);
+                    }
+
+                    // Cari di KATALOG (Coba nama asli dulu, lalu nama bersih)
+                    $catalogItem = \App\Models\ProductCatalog::where('nama', $rawName)
+                                    ->orWhere('nama', $cleanName)
+                                    ->first();
+
+                    if (!$catalogItem) {
+                        $this->warn("Produk '{$rawName}' tidak ditemukan di Katalog. Dilewati.");
+                        $skipped++;
+                        continue;
+                    }
+
+                    $produk = MasterProduk::where('kode_produk', $catalogItem->kode)->first();
+
+                    if ($produk) {
+                        $existingRoles = is_array($produk->target_role) ? $produk->target_role : [];
+                        $mergedRoles = array_unique(array_merge($existingRoles, $finalRoles));
+                        
+                        $produk->update([
+                            'nama_produk' => $catalogItem->nama,
+                            'satuan'      => $catalogItem->satuan,
+                            'kategori'    => $kat,
+                            'target_role' => $mergedRoles,
+                        ]);
+                    } else {
+                        MasterProduk::create([
+                            'kode_produk' => $catalogItem->kode,
+                            'nama_produk' => $catalogItem->nama,
+                            'satuan'      => $catalogItem->satuan,
+                            'kategori'    => $kat,
+                            'target_role' => $finalRoles,
+                        ]);
+                    }
+                    $count++;
+                }
             }
             DB::commit();
-            $this->info("Berhasil memproses {$count} produk.");
+            $this->info("BERHASIL! Memproses {$count} produk.");
             if ($skipped > 0) {
-                $this->warn("Ada {$skipped} produk yang dilewati karena tidak ada di Katalog.");
+                $this->warn("{$skipped} produk dilewati karena tidak ada di Katalog.");
             }
-            $this->info("Kategori: " . ($finalKategori ?: 'Variatif (cek kolom CSV)'));
-            $this->info("Target Role (Baru/Update): " . implode(', ', $finalRoles));
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error("Terjadi kesalahan pada baris {$count}: " . $e->getMessage());
+            $this->error("ERR: " . $e->getMessage());
         }
 
         fclose($handle);
